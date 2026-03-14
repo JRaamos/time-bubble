@@ -135,6 +135,10 @@ export default function Home(){
                     </GestureRow>
                     <GestureRow>
                         <GestureBullet />
+                        <GestureText>Use dois dedos em pinça para deixar o cronometro maior ou menor.</GestureText>
+                    </GestureRow>
+                    <GestureRow>
+                        <GestureBullet />
                         <GestureText>Pressione por alguns segundos para revelar o botao de fechar no proprio float.</GestureText>
                     </GestureRow>
                     <GestureRow>
