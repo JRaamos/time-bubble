@@ -46,15 +46,14 @@ Se houver conflito entre design e arquitetura do projeto:
 
 ## 0) Modo atual do app (obrigatório)
 
-O projeto está em fase de front-end estático:
+O projeto é um app mobile front-end com persistência local no dispositivo:
 
-- Não integrar com backend agora.
-- Não criar services reais nem chamadas HTTP novas.
-- Simular dados no `controller.js` (ou mocks locais).
+- Não integrar com backend.
+- Não criar APIs, chamadas HTTP novas ou dependência de serviços remotos para fluxo principal.
+- Persistir dados localmente no aparelho (ex.: storage local do app).
+- `controller.js` pode concentrar estado, regras de tela e integração com armazenamento local.
 - Prioridade: layout fiel ao Figma + navegação consistente.
-- Se algo depender do backend: deixar TODO claro.
-
-(Manter essas regras até a fase mudar.)
+- Se alguma necessidade futura depender de backend, sinalizar como TODO sem implementar a integração agora.
 
 ---
 
@@ -63,7 +62,7 @@ O projeto está em fase de front-end estático:
 Toda screen deve ter:
 
 - `index.js`  → view
-- `controller.js` → lógica + estado + mocks
+- `controller.js` → lógica + estado
 - `styled.js` → estilos
 
 Regras:

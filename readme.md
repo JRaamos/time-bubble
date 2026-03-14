@@ -2,6 +2,8 @@
 
 This is an React Native Expo project
 
+Arquitetura atual: app somente mobile/front-end, sem API própria, com armazenamento local no dispositivo.
+
 #### - To up and run follow steps bellow
 
 **Access Project folder and**
