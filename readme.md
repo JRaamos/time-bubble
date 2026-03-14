@@ -1,4 +1,4 @@
-## [⽎x] TimeBubble
+## [⽎x] Bella Have
 
 This is an React Native Expo project
 
@@ -62,5 +62,17 @@ Install `expo-cli` on your environment
 ```sh
     $ yarn publish:production
 ```
+
+## ⚠️ Regras obrigatórias do projeto
+
+Este repositório tem regras obrigatórias em:
+- `AGENTS.md` (global)
+- `src/**/AGENTS.md` (regras por pasta)
+- `.agents/skills/*` (procedimentos obrigatórios)
+
+Antes de gerar código, sempre:
+1) Ler `AGENTS.md`
+2) Checar se existe `AGENTS.md` na pasta alvo
+3) Seguir a skill adequada em `.agents/skills`
 
 #### Created by [**xApps**](https://x-apps.com.br) @ 2025

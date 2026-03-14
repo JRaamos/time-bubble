@@ -1,223 +1,137 @@
-# 🤖 Mobile Frontend AI Development Contract
+# AGENTS — Guia Núcleo (Leitura Obrigatória)
 
-Este documento define as regras obrigatórias para geração de código no projeto mobile.
-
-A IA deve respeitar integralmente a arquitetura existente.
-
----
-
-# 🧭 1. Criação de Novas Screens
-
-## ✅ Permitido criar novas screens SOMENTE quando solicitado.
-
-Ao criar uma nova screen:
-
-1. Seguir padrão existente em `src/screens/`
-2. Manter mesma estrutura de organização
-3. Registrar a screen no sistema de navegação existente
-4. Não modificar navegação já implementada
-5. Não alterar fluxo de telas existentes
-
-❌ Nunca substituir navigator existente
-❌ Nunca criar novo sistema de navegação
-❌ Nunca alterar stack atual sem instrução explícita
+Este arquivo contém apenas regras globais e imutáveis do projeto.
+Tutoriais e receitas devem ser carregados via skills em `.agents/skills`.
 
 ---
 
-# 🧭 2. Navegação
+## 🔒 Regra 0 — Ordem obrigatória antes de codar
 
-Sempre utilizar o padrão existente do projeto:
+Antes de gerar qualquer código, o agente deve:
 
-- Stack Navigator
-- Bottom Tabs
-- Drawer (se existir)
+1) Ler este arquivo inteiro.
+2) Confirmar o node-id e a tela correta no Figma.
+3) Carregar as skills aplicáveis (somente as necessárias).
+4) Só então implementar.
 
-Nunca criar navegação paralela.
-
-Ao adicionar nova tela:
-- Declarar no mesmo arquivo onde as outras estão declaradas
-- Seguir padrão de nomeação
-- Manter tipagem (se existir)
+Se houver conflito entre design e arquitetura do projeto:
+✅ a arquitetura do projeto tem prioridade.
 
 ---
 
-# ♻️ 3. Reutilização é obrigatória
+## 🔧 Skills disponíveis (carregar sob demanda)
 
-Antes de criar qualquer coisa nova, verificar:
+- `.agents/skills/build-screen-from-figma.md`
+  → quando criar uma screen nova (estrutura + fluxo)
 
-- `components/`
-- `hooks/`
-- `services/`
-- `utils/`
-- `context/`
-- `theme/`
+- `.agents/skills/reuse-component-check.md`
+  → quando o Figma tiver card/item/row/list
 
-Se existir algo semelhante → reutilizar.
+- `.agents/skills/svg-icon-from-figma.md`
+  → quando existir ícone SVG no Figma
 
-Criar novo componente somente se:
-- Não houver equivalente
-- For realmente reutilizável
-- Seguir padrão do projeto
+- `.agents/skills/layout-header-sidebar.md`
+  → quando a tela envolver Header/Sidebar/menu/topbar/drawer
 
----
+- `.agents/skills/react-native-flatlist.md`
+  → quando renderizar listas no React Native
 
-# 🌐 4. Services e API
+- `.agents/skills/styled-no-inline-theme-logic.md`
+  → quando houver lógica de cores ou estilos relacionados ao theme
 
-Regra obrigatória:
-
-Screen
-  ↓
-Hook
-  ↓
-Service
-  ↓
-API
-
-❌ Screen não pode chamar API direto
-❌ Não usar fetch diretamente
-❌ Não usar axios diretamente fora de services
-
-Toda comunicação externa deve passar por `services/`.
+- `.agents/skills/no-derived-render-consts.md`
+  → quando houver default/resolved/has* para decidir renderização ou props
 
 ---
 
-# ⚛️ 5. Performance (Mobile é crítico)
+## 0) Modo atual do app (obrigatório)
 
-## useMemo
+O projeto está em fase de front-end estático:
 
-Usar quando:
-- Transformar listas
-- Filtrar dados
-- Mapear arrays grandes
+- Não integrar com backend agora.
+- Não criar services reais nem chamadas HTTP novas.
+- Simular dados no `controller.js` (ou mocks locais).
+- Prioridade: layout fiel ao Figma + navegação consistente.
+- Se algo depender do backend: deixar TODO claro.
 
-Evitar recalcular a cada render.
-
----
-
-## useCallback
-
-Usar quando:
-- Passar função para componentes filhos
-- Handlers de FlatList
-- Evitar re-render desnecessário
+(Manter essas regras até a fase mudar.)
 
 ---
 
-## React.memo
+## 1) Estrutura obrigatória por screen
 
-Utilizar para componentes de item de lista quando necessário.
+Toda screen deve ter:
 
----
+- `index.js`  → view
+- `controller.js` → lógica + estado + mocks
+- `styled.js` → estilos
 
-## FlatList
-
-Sempre usar FlatList para listas.
-Nunca usar map direto para renderizar listas grandes.
-
-Sempre:
-- Definir keyExtractor
-- Evitar inline functions pesadas
-- Memorizar renderItem quando necessário
+Regras:
+- `index.js` deve ser simples.
+- Lógica pesada nunca dentro do render.
 
 ---
 
-# 🎨 6. Estilo
+## 2) Navegação e layout
 
-Se precisar criar estilo novo:
+- Sempre usar o Container/layout padrão do projeto.
+- Não criar container novo se já existir equivalente.
+- Respeitar arquitetura de rotas existente.
 
-- Usar o sistema padrão do projeto
-  - styled-components (se existir)
-  - ou StyleSheet padrão se for o padrão atual
-
-Nunca:
-- Criar estilos fora do padrão
-- Hardcode de cores
-- Ignorar theme
-
-Sempre usar:
-- theme.colors
-- theme.spacing
-- theme.fonts
+Header/Sidebar:
+- Reuso obrigatório (ver skill `layout-header-sidebar.md`).
 
 ---
 
-# 📱 7. Componentização
+## 3) Styling (imutável)
 
-Separação obrigatória:
-
-- components/ → componentes reutilizáveis
-- screens/ → composição de tela
-- hooks/ → lógica reutilizável
-- services/ → comunicação externa
-
-Componentes devem ser:
-- Pequenos
-- Reutilizáveis
-- Sem regra pesada
+- Usar somente `styled-components`.
+- ❌ Não usar CSS modules, Tailwind, ou `style={{ ... }}` inline.
+- Para variações visuais, controlar por props semânticas.
+- ❌ Não usar `useTheme()` para decidir estilos ou cores dentro de `index.js` ou `controller.js`.
+- ❌ Não criar styled components genéricos que aceitam props de estilo (`color`, `size`, `family`, etc.).
+- ✅ Condições de estilo devem ser implementadas diretamente no `styled.js` usando props semânticas (`primary`, `active`, `muted`, etc.).
 
 ---
 
-# 🔄 8. Estado Global
+## 3.1) Render e props (imutável)
 
-Se o projeto já usa:
-
-- Context API
-- Zustand
-- Redux
-- Outro gerenciador
-
-A IA deve usar exclusivamente o padrão existente.
-
-❌ Nunca introduzir nova lib de estado
-❌ Nunca duplicar context
+- ❌ Não criar variáveis intermediárias para render/props dentro do componente (ex.: `defaultX`, `resolvedX`, `hasX`).
+- ❌ Não usar `typeof prop === 'undefined'` para decidir renderização.
+- ❌ Não criar “props resolvidas” com `prop || {}` só para checar algo depois (`resolvedSearchProps`).
+- ✅ Condições devem ficar inline no JSX (ternário/&&) e props devem ser passadas diretamente ao componente.
+- ✅ Defaults (quando necessários) devem ser feitos no parâmetro da função (ex.: `searchProps = {}`, `actions = null`), sem criar `resolved*` no corpo.
 
 ---
 
-# 🔐 9. Breaking Changes são proibidos
+## 4) Tokens e Theme (imutável)
 
-A IA NÃO pode:
-
-- Alterar navegação existente
-- Alterar assinatura de services
-- Modificar contratos de API
-- Alterar props públicas existentes
-- Alterar estrutura global do app
-
-Se precisar estender:
-→ Criar nova implementação compatível.
+- ❌ Nenhuma cor literal (`#...`, `rgb`, `rgba`, `hsl`) em screens/componentes.
+- ✅ Toda cor deve vir do theme (`p.theme.<token>`).
+- Se surgir cor nova do design: criar token antes de usar.
 
 ---
 
-# 🧼 10. Código Limpo
+## 5) Reuso antes de criar (prioridade máxima)
 
-O código deve:
+Antes de criar qualquer componente novo, procurar em:
 
-- Seguir padrão já utilizado
-- Não duplicar lógica
-- Não criar complexidade desnecessária
-- Manter consistência visual
-- Seguir convenções existentes
+- `src/components`
+- `src/hooks`
+- `src/services`
+- `src/utils`
+- `src/context`
 
----
-
-# 🧠 11. Antes de Gerar Código
-
-A IA deve validar mentalmente:
-
-- Estou reutilizando componentes existentes?
-- Estou seguindo o padrão das outras screens?
-- Estou respeitando a navegação atual?
-- Estou evitando breaking changes?
-- Estou mantendo performance mobile?
-
-Se qualquer resposta for "não"
-→ Ajustar antes de gerar.
+Se o Figma mostrar card/item/row/list:
+→ aplicar skill `reuse-component-check.md`.
 
 ---
 
-# 🔒 Regra Final
+## ✅ Checklist final (antes de entregar)
 
-O projeto possui arquitetura consolidada.
-
-A IA deve se adaptar ao projeto.
-O projeto NÃO deve se adaptar ao código gerado.
+- Node-id validado no Figma?
+- Screen segue `index/controller/styled`?
+- Reuso aplicado antes de criar componente novo?
+- Sem cores hardcoded?
+- Sem `variant` string para controlar layouts complexos?
+- Header/Sidebar reutilizados via Container?
