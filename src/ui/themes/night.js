@@ -14,4 +14,9 @@ export const night = {
     'inputlabel': '#4C4C4C',
     'inputtext': '#cccccc',
     'inputbackground': '#0D0D0D',
-}
+    'timerScreen':'#101319',
+    'timerSurface':'#171C24',
+    'timerSurfaceSoft':'#222933',
+    'timerBorder':'#2E9CC3',
+    'timerTextMuted':'#9AA7B5',
+} 

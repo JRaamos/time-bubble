@@ -15,7 +15,7 @@ import { night } from './night'
 export function ThemeContext({ children }){
 
     const colorScheme = `light`
-    const currentTheme = day
+    const currentTheme = night
     // const colorScheme = useColorScheme()
     // const { currentTheme, setCurrentTheme, darkmode } = useContext(CoreContext)
 
