@@ -1,0 +1,17 @@
+node_modules
+
+/node_modules
+
+node_modules/
+
+*.ipa
+*.apk
+*.aab
+
+.DS_Store
+
+/ios
+ios/
+android/
+/android
+.expo/

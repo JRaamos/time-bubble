@@ -1,0 +1,137 @@
+{
+    "expo": {
+        "name": "timebubble",
+        "slug": "timebubble",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "automatic",
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "cover",
+            "backgroundColor": "#ffffff"
+        },
+        "updates": {
+            "fallbackToCacheTimeout": 0,
+            "checkAutomatically": "ON_LOAD",
+            "requestHeaders": {
+                "expo-channel-name": "production"
+            }
+        },
+        "assetBundlePatterns": [
+            "**/*"
+        ],
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "br.com.xapps.timebubble",
+            "buildNumber": "20260314132617",
+            "infoPlist": {
+                "NSLocationAlwaysUsageDescription": "Permita o $(PRODUCT_NAME) acessar a sua localização para encontrar os recursos mais próximos.",
+                "NSLocationUsageDescription": "Permita o $(PRODUCT_NAME) acessar a sua localização para encontrar os recursos mais próximos.",
+                "NSLocationWhenInUseUsageDescription": "Permita o $(PRODUCT_NAME) acessar a sua localização para encontrar os recursos mais próximos",
+                "NSCameraUsageDescription": "Permita o $(PRODUCT_NAME) acessar a sua camera para personalizar suas fotos",
+                "NSFaceIDUsageDescription": "Usamos o Face ID para autenticar você com mais segurança"
+            },
+            "entitlements": {
+                "aps-environment": "development"
+            },
+            "privacyManifests": {
+                "NSPrivacyAccessedAPITypes": [
+                    {
+                        "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+                        "NSPrivacyAccessedAPITypeReasons": [
+                            "CA92.1"
+                        ]
+                    }
+                ]
+            }
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#ffffff"
+            },
+            "package": "br.com.xapps.timebubble",
+            "versionCode": 1,
+            "permissions": [
+                "POST_NOTIFICATIONS",
+                "INTERNET",
+                "CAMERA",
+                "ACCESS_COARSE_LOCATION",
+                "ACCESS_FINE_LOCATION"
+            ],
+            "config": {
+                "googleMaps": {
+                    "apiKey": "GOOGLE_MAPS_APIKEY"
+                }
+            }
+        },
+        "web": {
+            "favicon": "./assets/favicon.png",
+            "build": {
+                "babel": {
+                    "include": [
+                        "@ui-kitten/components"
+                    ]
+                }
+            }
+        },
+        "scheme": "timebubble",
+        "plugins": [
+            [
+                "expo-image-picker",
+                {
+                    "photosPermission": "Permita o $(PRODUCT_NAME) acessar suas fotos para escolher fotos para o perfil.",
+                    "cameraPermission": "Permita o $(PRODUCT_NAME) acessar sua camera para tirar fotos para o perfil.",
+                    "microphonePermission": "Permita o $(PRODUCT_NAME) acessar seu microfone para melhorar nossa rede de sugestões."
+                }
+            ],
+            [
+                "expo-build-properties",
+                {
+                    "android": {
+                        "compileSdkVersion": 35,
+                        "targetSdkVersion": 35,
+                        "buildToolsVersion": "35.0.0",
+                        "usesCleartextTraffic": true
+                    },
+                    "ios": {
+                        "deploymentTarget": "15.1"
+                    }
+                }
+            ],
+            [
+                "expo-notifications",
+                {
+                    "icon": "./assets/icon.png",
+                    "color": "#ffffff"
+                }
+            ],
+            [
+                "expo-camera",
+                {
+                    "cameraPermission": "Permita o $(PRODUCT_NAME) acessar sua camera",
+                    "microphonePermission": "Permita o $(PRODUCT_NAME) acessar seu microfone",
+                    "recordAudioAndroid": true
+                }
+            ],
+            "expo-asset",
+            "expo-font",
+            [
+                "expo-splash-screen",
+                {
+                    "backgroundColor": "#fff",
+                    "image": "./assets/icon.png",
+                    "dark": {
+                        "image": "./assets/icon.png",
+                        "backgroundColor": "#000"
+                    },
+                    "imageWidth": 200
+                }
+            ]
+        ]
+    },
+    "updates": {
+        "runtimeversion": "1.0.0"
+    }
+}
