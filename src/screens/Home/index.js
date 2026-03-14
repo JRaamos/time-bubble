@@ -137,6 +137,10 @@ export default function Home(){
                         <GestureBullet />
                         <GestureText>Pressione por alguns segundos para revelar o botao de fechar no proprio float.</GestureText>
                     </GestureRow>
+                    <GestureRow>
+                        <GestureBullet />
+                        <GestureText>Quando o botao aparecer, tocar no cronometro fora dele apenas esconde o fechamento.</GestureText>
+                    </GestureRow>
                 </GestureList>
             </Screen>
         </ContainerAuthenticated>
