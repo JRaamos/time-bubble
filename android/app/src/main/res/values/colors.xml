@@ -1,0 +1,11 @@
+<resources>
+  <color name="splashscreen_background">#fff</color>
+  <color name="iconBackground">#ffffff</color>
+  <color name="colorPrimary">#023c69</color>
+  <color name="colorPrimaryDark">#fff</color>
+  <color name="notification_icon_color">#ffffff</color>
+  <color name="floating_timer_background">#171C27</color>
+  <color name="floating_timer_border">#44B6E8</color>
+  <color name="floating_timer_text">#F9FBFF</color>
+  <color name="floating_timer_close_background">#CE5657</color>
+</resources>
