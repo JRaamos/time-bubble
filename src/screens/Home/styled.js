@@ -195,7 +195,7 @@ export const PreviewBubble = styled.View.attrs({
 
 export const PreviewTime = styled.Text.attrs({
 })`
-    font-family: SemiBold;
+    font-family: Bold;
     font-size: 40px;
     color: ${props => props.textHex || props.theme.timerFaceText};
     text-align: center;

@@ -1,4 +1,4 @@
-package br.com.xapps.timebubble.floatingtimer
+package br.com.jonathanfebraio.timebubble.floatingtimer
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -14,8 +14,8 @@ import android.os.Looper
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import br.com.xapps.timebubble.MainActivity
-import br.com.xapps.timebubble.R
+import br.com.jonathanfebraio.timebubble.MainActivity
+import br.com.jonathanfebraio.timebubble.R
 
 class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
     private val handler = Handler(Looper.getMainLooper())
@@ -206,8 +206,8 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
         private const val NOTIFICATION_ID = 1201
         private var activeInstance: FloatingTimerService? = null
 
-        const val ACTION_HIDE = "br.com.xapps.timebubble.floatingtimer.HIDE"
-        const val ACTION_SHOW = "br.com.xapps.timebubble.floatingtimer.SHOW"
+        const val ACTION_HIDE = "br.com.jonathanfebraio.timebubble.floatingtimer.HIDE"
+        const val ACTION_SHOW = "br.com.jonathanfebraio.timebubble.floatingtimer.SHOW"
 
         fun show(context: Context) {
             val intent = Intent(context, FloatingTimerService::class.java).apply {

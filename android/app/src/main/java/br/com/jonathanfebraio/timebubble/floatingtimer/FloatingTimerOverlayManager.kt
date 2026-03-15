@@ -1,4 +1,4 @@
-package br.com.xapps.timebubble.floatingtimer
+package br.com.jonathanfebraio.timebubble.floatingtimer
 
 import android.content.Context
 import android.graphics.Color
@@ -18,7 +18,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import br.com.xapps.timebubble.R
+import br.com.jonathanfebraio.timebubble.R
 import kotlin.math.abs
 
 class FloatingTimerOverlayManager(

@@ -15,9 +15,21 @@ const floatingTimerModule = NativeModules.FloatingTimerModule
 const floatingTimerEmitter = Platform.OS === 'android' && floatingTimerModule ? new NativeEventEmitter(floatingTimerModule) : null
 const logPrefix = '[FloatingTimer]'
 
+const debugLog = (event, payload) => {
+    if (__DEV__) {
+        console.log(`${logPrefix} ${event}`, payload)
+    }
+}
+
+const debugError = (event, error) => {
+    if (__DEV__) {
+        console.error(`${logPrefix} ${event}`, error)
+    }
+}
+
 export const getOverlayPermissionStatus = async () => {
     if (Platform.OS !== 'android' || !floatingTimerModule?.getOverlayPermissionStatus) {
-        console.log(`${ logPrefix } getOverlayPermissionStatus unavailable`, {
+        debugLog('getOverlayPermissionStatus:unavailable', {
             platform: Platform.OS,
             hasModule: !!floatingTimerModule,
         })
@@ -25,54 +37,54 @@ export const getOverlayPermissionStatus = async () => {
     }
 
     const result = await floatingTimerModule.getOverlayPermissionStatus()
-    console.log(`${ logPrefix } getOverlayPermissionStatus`, { result })
+    debugLog('getOverlayPermissionStatus:success', { result })
     return result
 }
 
 export const openOverlayPermissionSettings = async () => {
     if (Platform.OS !== 'android' || !floatingTimerModule?.openOverlayPermissionSettings) {
-        console.log(`${ logPrefix } openOverlayPermissionSettings unavailable`, {
+        debugLog('openOverlayPermissionSettings:unavailable', {
             platform: Platform.OS,
             hasModule: !!floatingTimerModule,
         })
         return
     }
 
-    console.log(`${ logPrefix } openOverlayPermissionSettings:start`)
+    debugLog('openOverlayPermissionSettings:start')
 
     try {
         const result = await floatingTimerModule.openOverlayPermissionSettings()
-        console.log(`${ logPrefix } openOverlayPermissionSettings:success`, { result })
+        debugLog('openOverlayPermissionSettings:success', { result })
         return result
     } catch (error) {
-        console.error(`${ logPrefix } openOverlayPermissionSettings:error`, error)
+        debugError('openOverlayPermissionSettings:error', error)
         throw error
     }
 }
 
 export const showFloatingTimer = async () => {
     if (Platform.OS !== 'android' || !floatingTimerModule?.showFloatingTimer) {
-        console.log(`${ logPrefix } showFloatingTimer unavailable`, {
+        debugLog('showFloatingTimer:unavailable', {
             platform: Platform.OS,
             hasModule: !!floatingTimerModule,
         })
         return
     }
 
-    console.log(`${ logPrefix } showFloatingTimer:start`)
+    debugLog('showFloatingTimer:start')
     return floatingTimerModule.showFloatingTimer()
 }
 
 export const hideFloatingTimer = async () => {
     if (Platform.OS !== 'android' || !floatingTimerModule?.hideFloatingTimer) {
-        console.log(`${ logPrefix } hideFloatingTimer unavailable`, {
+        debugLog('hideFloatingTimer:unavailable', {
             platform: Platform.OS,
             hasModule: !!floatingTimerModule,
         })
         return
     }
 
-    console.log(`${ logPrefix } hideFloatingTimer:start`)
+    debugLog('hideFloatingTimer:start')
     return floatingTimerModule.hideFloatingTimer()
 }
 
@@ -105,14 +117,14 @@ export const getFloatingTimerAppearance = async () => {
 
 export const setFloatingTimerAppearance = async (backgroundHex, textHex) => {
     if (Platform.OS !== 'android' || !floatingTimerModule?.setFloatingTimerAppearance) {
-        console.log(`${ logPrefix } setFloatingTimerAppearance unavailable`, {
+        debugLog('setFloatingTimerAppearance:unavailable', {
             platform: Platform.OS,
             hasModule: !!floatingTimerModule,
         })
         return
     }
 
-    console.log(`${ logPrefix } setFloatingTimerAppearance:start`, {
+    debugLog('setFloatingTimerAppearance:start', {
         backgroundHex,
         textHex,
     })

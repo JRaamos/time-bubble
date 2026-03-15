@@ -1,8 +1,8 @@
 import { ReadObject, SaveObject } from './storage'
 
 export const DEVELOPMENT_MODE = true
- 
-export const API_ENDPOINT = __DEV__ ? 'http://localhost:1337/api' : 'https://timebubble-api.staging-xapps.dev'
+
+export const API_ENDPOINT = ''
 
 export const GetHeaders = async (authenticated) => {
 	const headers = { 'Content-Type': 'application/json' }

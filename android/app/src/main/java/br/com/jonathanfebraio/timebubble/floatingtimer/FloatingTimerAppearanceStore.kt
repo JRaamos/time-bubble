@@ -1,4 +1,4 @@
-package br.com.xapps.timebubble.floatingtimer
+package br.com.jonathanfebraio.timebubble.floatingtimer
 
 import android.content.Context
 import android.graphics.Color

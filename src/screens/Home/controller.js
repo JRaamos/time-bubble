@@ -13,6 +13,20 @@ import {
     subscribeFloatingTimerState,
 } from '@services/floatingTimer'
 
+const logPrefix = '[FloatingTimer]'
+
+const debugLog = (event, payload) => {
+    if (__DEV__) {
+        console.log(`${logPrefix} ${event}`, payload)
+    }
+}
+
+const debugError = (event, error) => {
+    if (__DEV__) {
+        console.error(`${logPrefix} ${event}`, error)
+    }
+}
+
 const formatElapsedTime = elapsedMs => {
     const minutes = Math.floor(elapsedMs / 60000)
     const seconds = Math.floor((elapsedMs % 60000) / 1000)
@@ -91,17 +105,17 @@ export default function useController(){
 
     const handlePrimaryAction = async () => {
         if (Platform.OS !== 'android') {
-            console.log('[FloatingTimer] handlePrimaryAction skipped: non-android platform')
+            debugLog('handlePrimaryAction:skip-non-android')
             return
         }
 
         setBusy(true)
 
         try {
-            console.log('[FloatingTimer] handlePrimaryAction:start')
+            debugLog('handlePrimaryAction:start')
 
             const hasOverlayPermission = await getOverlayPermissionStatus()
-            console.log('[FloatingTimer] handlePrimaryAction:permission-check', {
+            debugLog('handlePrimaryAction:permission-check', {
                 hasOverlayPermission,
             })
 
@@ -111,7 +125,7 @@ export default function useController(){
                 await showFloatingTimer()
             }
         } catch (error) {
-            console.error('[FloatingTimer] handlePrimaryAction:error', error)
+            debugError('handlePrimaryAction:error', error)
         } finally {
             setBusy(false)
             syncState()
@@ -122,10 +136,10 @@ export default function useController(){
         setBusy(true)
 
         try {
-            console.log('[FloatingTimer] handleHideOverlay:start')
+            debugLog('handleHideOverlay:start')
             await hideFloatingTimer()
         } catch (error) {
-            console.error('[FloatingTimer] handleHideOverlay:error', error)
+            debugError('handleHideOverlay:error', error)
         } finally {
             setBusy(false)
             syncState()
@@ -142,7 +156,7 @@ export default function useController(){
         try {
             await setFloatingTimerAppearance(hex, textHexRef.current)
         } catch (error) {
-            console.error('[FloatingTimer] handleCommitBackground:error', error)
+            debugError('handleCommitBackground:error', error)
             syncState()
         }
     }
@@ -157,7 +171,7 @@ export default function useController(){
         try {
             await setFloatingTimerAppearance(backgroundHexRef.current, hex)
         } catch (error) {
-            console.error('[FloatingTimer] handleCommitText:error', error)
+            debugError('handleCommitText:error', error)
             syncState()
         }
     }

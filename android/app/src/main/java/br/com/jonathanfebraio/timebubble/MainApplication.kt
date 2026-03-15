@@ -1,8 +1,8 @@
-package br.com.xapps.timebubble
+package br.com.jonathanfebraio.timebubble
 
 import android.app.Application
 import android.content.res.Configuration
-import br.com.xapps.timebubble.floatingtimer.FloatingTimerPackage
+import br.com.jonathanfebraio.timebubble.floatingtimer.FloatingTimerPackage
 
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication

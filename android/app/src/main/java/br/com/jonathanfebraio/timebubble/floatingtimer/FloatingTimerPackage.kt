@@ -1,4 +1,4 @@
-package br.com.xapps.timebubble.floatingtimer
+package br.com.jonathanfebraio.timebubble.floatingtimer
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

@@ -3,6 +3,7 @@
     "name": "TimeBubble – Cronômetro",
     "slug": "timebubble",
     "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -15,26 +16,20 @@
       "fallbackToCacheTimeout": 0,
       "checkAutomatically": "ON_LOAD"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "br.com.xapps.timebubble",
+      "bundleIdentifier": "br.com.jonathanfebraio.timebubble",
       "buildNumber": "20260314132617",
-      "infoPlist": {
-        "NSLocationAlwaysUsageDescription": "Permita o $(PRODUCT_NAME) acessar a sua localização para encontrar os recursos mais próximos.",
-        "NSLocationUsageDescription": "Permita o $(PRODUCT_NAME) acessar a sua localização para encontrar os recursos mais próximos.",
-        "NSLocationWhenInUseUsageDescription": "Permita o $(PRODUCT_NAME) acessar a sua localização para encontrar os recursos mais próximos",
-        "NSCameraUsageDescription": "Permita o $(PRODUCT_NAME) acessar a sua camera para personalizar suas fotos",
-        "NSFaceIDUsageDescription": "Usamos o Face ID para autenticar você com mais segurança"
-      },
-      "entitlements": {
-        "aps-environment": "development"
-      },
       "privacyManifests": {
         "NSPrivacyAccessedAPITypes": [
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
           }
         ]
       }
@@ -44,43 +39,21 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "br.com.xapps.timebubble",
+      "package": "br.com.jonathanfebraio.timebubble",
       "versionCode": 1,
       "permissions": [
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.INTERNET",
-        "android.permission.CAMERA",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.RECORD_AUDIO",
         "android.permission.SYSTEM_ALERT_WINDOW",
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.FOREGROUND_SERVICE_SPECIAL_USE"
-      ],
-      "config": {
-        "googleMaps": {
-          "apiKey": "GOOGLE_MAPS_APIKEY"
-        }
-      }
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png",
-      "build": {
-        "babel": {
-          "include": ["@ui-kitten/components"]
-        }
-      }
+      "favicon": "./assets/favicon.png"
     },
     "scheme": "timebubble",
     "plugins": [
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "Permita o $(PRODUCT_NAME) acessar suas fotos para escolher fotos para o perfil.",
-          "cameraPermission": "Permita o $(PRODUCT_NAME) acessar sua camera para tirar fotos para o perfil.",
-          "microphonePermission": "Permita o $(PRODUCT_NAME) acessar seu microfone para melhorar nossa rede de sugestões."
-        }
-      ],
       [
         "expo-build-properties",
         {
@@ -95,43 +68,24 @@
           }
         }
       ],
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/icon.png",
-          "color": "#ffffff"
-        }
-      ],
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "Permita o $(PRODUCT_NAME) acessar sua camera",
-          "microphonePermission": "Permita o $(PRODUCT_NAME) acessar seu microfone",
-          "recordAudioAndroid": true
-        }
-      ],
-      "expo-asset",
       "expo-font",
       [
         "expo-splash-screen",
         {
           "backgroundColor": "#fff",
-          "image": "./assets/icon.png",
+          "image": "./assets/splash.png",
           "dark": {
-            "image": "./assets/icon.png",
+            "image": "./assets/splash.png",
             "backgroundColor": "#000"
           },
-          "imageWidth": 200
+          "imageWidth": 240
         }
       ]
     ],
     "extra": {
       "eas": {
-        "projectId": "1c3ced85-daec-4706-8e4f-8269e84b667a"
+        "projectId": "7f6c7ac1-a43b-495e-8b38-175814c25798"
       }
     }
-  },
-  "updates": {
-    "runtimeversion": "1.0.0"
   }
 }

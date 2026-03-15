@@ -1,4 +1,4 @@
-package br.com.xapps.timebubble
+package br.com.jonathanfebraio.timebubble
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

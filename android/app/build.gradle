@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'br.com.xapps.timebubble'
+    namespace 'br.com.jonathanfebraio.timebubble'
     defaultConfig {
-        applicationId 'br.com.xapps.timebubble'
+        applicationId 'br.com.jonathanfebraio.timebubble'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -1,6 +1,6 @@
-## [⽎x] Bella Have
+## TimeBubble
 
-This is an React Native Expo project
+This is a React Native Expo project.
 
 Arquitetura atual: app somente mobile/front-end, sem API própria, com armazenamento local no dispositivo.
 
@@ -77,4 +77,4 @@ Antes de gerar código, sempre:
 2) Checar se existe `AGENTS.md` na pasta alvo
 3) Seguir a skill adequada em `.agents/skills`
 
-#### Created by [**xApps**](https://x-apps.com.br) @ 2025
+#### Created and maintained by **Jonathan Febraio** @ 2026
