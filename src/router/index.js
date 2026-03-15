@@ -25,7 +25,7 @@ export default function Router() {
   useDeeplink()
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Home">
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Splash">
       <Stack.Screen name="Splash" component={Splash} />
       <Stack.Screen name="Home" component={Home} />
       {/* <Stack.Screen name="Me" component={Me} />   
