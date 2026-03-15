@@ -12,6 +12,7 @@ import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -34,6 +35,7 @@ class FloatingTimerOverlayManager(
 
     private val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     private val touchSlop = dpToPx(8)
+    private val closeRevealLongPressTimeoutMs = ViewConfiguration.getLongPressTimeout().toLong() + 450L
 
     private var rootView: LinearLayout? = null
     private var cardView: FrameLayout? = null
@@ -71,7 +73,7 @@ class FloatingTimerOverlayManager(
         }
 
         val background = GradientDrawable().apply {
-            setColor(ContextCompat.getColor(context, R.color.floating_timer_background))
+            setColor(FloatingTimerAppearanceStore.resolveBackgroundColor(context))
             setStroke(dpToPx(1), ContextCompat.getColor(context, R.color.floating_timer_border))
         }
 
@@ -81,7 +83,7 @@ class FloatingTimerOverlayManager(
         }
 
         val timeView = TextView(context).apply {
-            setTextColor(ContextCompat.getColor(context, R.color.floating_timer_text))
+            setTextColor(FloatingTimerAppearanceStore.resolveTextColor(context))
             typeface = Typeface.MONOSPACE
             gravity = Gravity.CENTER
             text = formatElapsed(FloatingTimerStateStore.getElapsedMs())
@@ -138,8 +140,15 @@ class FloatingTimerOverlayManager(
         closeButtonView = closeView
 
         applyScale(FloatingTimerStateStore.overlayScale)
+        applyAppearance()
         attachTouchHandling(root, card, params)
         windowManager.addView(root, params)
+    }
+
+    fun applyAppearance() {
+        cardBackground?.setColor(FloatingTimerAppearanceStore.resolveBackgroundColor(context))
+        timerTextView?.setTextColor(FloatingTimerAppearanceStore.resolveTextColor(context))
+        rootView?.requestLayout()
     }
 
     fun updateTimeText(text: String) {
@@ -176,11 +185,9 @@ class FloatingTimerOverlayManager(
                 }
                 return true
             }
-
-            override fun onLongPress(event: MotionEvent) {
-                showCloseButton()
-            }
-        })
+        }).apply {
+            setIsLongpressEnabled(false)
+        }
 
         val scaleDetector = ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
@@ -209,23 +216,38 @@ class FloatingTimerOverlayManager(
         var initialTouchY = 0f
         var dragging = false
         var scaling = false
+        var longPressTriggered = false
+        val revealCloseButtonRunnable = Runnable {
+            if (!dragging && !scaling) {
+                longPressTriggered = true
+                showCloseButton()
+            }
+        }
+
+        fun cancelRevealCloseButton() {
+            card.removeCallbacks(revealCloseButtonRunnable)
+        }
 
         card.setOnTouchListener { _, event ->
             scaleDetector.onTouchEvent(event)
 
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
+                    cancelRevealCloseButton()
                     initialX = params.x
                     initialY = params.y
                     initialTouchX = event.rawX
                     initialTouchY = event.rawY
                     dragging = false
                     scaling = false
+                    longPressTriggered = false
+                    card.postDelayed(revealCloseButtonRunnable, closeRevealLongPressTimeoutMs)
                     gestureDetector.onTouchEvent(event)
                     true
                 }
 
                 MotionEvent.ACTION_POINTER_DOWN -> {
+                    cancelRevealCloseButton()
                     scaling = true
                     hideCloseButton()
                     true
@@ -233,6 +255,7 @@ class FloatingTimerOverlayManager(
 
                 MotionEvent.ACTION_MOVE -> {
                     if (scaleDetector.isInProgress || event.pointerCount > 1 || scaling) {
+                        cancelRevealCloseButton()
                         scaling = true
                         hideCloseButton()
                         true
@@ -241,6 +264,7 @@ class FloatingTimerOverlayManager(
                         val deltaY = (event.rawY - initialTouchY).toInt()
 
                         if (!dragging && (abs(deltaX) > touchSlop || abs(deltaY) > touchSlop)) {
+                            cancelRevealCloseButton()
                             dragging = true
                             hideCloseButton()
                         }
@@ -259,22 +283,25 @@ class FloatingTimerOverlayManager(
                 }
 
                 MotionEvent.ACTION_POINTER_UP -> {
+                    cancelRevealCloseButton()
                     scaling = event.pointerCount - 1 > 1 || scaleDetector.isInProgress
                     true
                 }
 
                 MotionEvent.ACTION_UP,
                 MotionEvent.ACTION_CANCEL -> {
-                    if (!dragging && !scaling) {
+                    cancelRevealCloseButton()
+                    if (!dragging && !scaling && !longPressTriggered) {
                         gestureDetector.onTouchEvent(event)
                     }
                     dragging = false
                     scaling = false
+                    longPressTriggered = false
                     true
                 }
 
                 else -> {
-                    if (!scaling) {
+                    if (!scaling && !longPressTriggered) {
                         gestureDetector.onTouchEvent(event)
                     }
                     true

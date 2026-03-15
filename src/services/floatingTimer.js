@@ -6,6 +6,11 @@ const fallbackState = {
     visible: false,
 }
 
+const fallbackAppearance = {
+    backgroundHex: '#171C27',
+    textHex: '#F9FBFF',
+}
+
 const floatingTimerModule = NativeModules.FloatingTimerModule
 const floatingTimerEmitter = Platform.OS === 'android' && floatingTimerModule ? new NativeEventEmitter(floatingTimerModule) : null
 const logPrefix = '[FloatingTimer]'
@@ -83,6 +88,36 @@ export const getFloatingTimerState = async () => {
         running: !!state?.running,
         visible: !!state?.visible,
     }
+}
+
+export const getFloatingTimerAppearance = async () => {
+    if (Platform.OS !== 'android' || !floatingTimerModule?.getFloatingTimerAppearance) {
+        return fallbackAppearance
+    }
+
+    const appearance = await floatingTimerModule.getFloatingTimerAppearance()
+
+    return {
+        backgroundHex: appearance?.backgroundHex || fallbackAppearance.backgroundHex,
+        textHex: appearance?.textHex || fallbackAppearance.textHex,
+    }
+}
+
+export const setFloatingTimerAppearance = async (backgroundHex, textHex) => {
+    if (Platform.OS !== 'android' || !floatingTimerModule?.setFloatingTimerAppearance) {
+        console.log(`${ logPrefix } setFloatingTimerAppearance unavailable`, {
+            platform: Platform.OS,
+            hasModule: !!floatingTimerModule,
+        })
+        return
+    }
+
+    console.log(`${ logPrefix } setFloatingTimerAppearance:start`, {
+        backgroundHex,
+        textHex,
+    })
+
+    return floatingTimerModule.setFloatingTimerAppearance(backgroundHex, textHex)
 }
 
 export const subscribeFloatingTimerState = listener => {

@@ -102,7 +102,7 @@ export const PrimaryActionIcon = styled(Icon).attrs(props => ({
 
 export const SummaryGrid = styled.View.attrs({
 })`
-    margin-bottom: 18px;
+    margin: 18px 0px;
 `;
 
 export const SummaryCard = styled.View.attrs({
@@ -181,21 +181,23 @@ export const PreviewTagText = styled.Text.attrs({
     letter-spacing: 1px;
     text-transform: uppercase;
     color: ${props => props.theme.timerFace};
+    
 `;
 
 export const PreviewBubble = styled.View.attrs({
 })`
-    padding: 22px 18px;
+    align-items: center;
+    padding: 8px 16px;
     border-radius: 22px;
-    background: ${props => props.theme.timerFace};
+    background: ${props => props.backgroundHex || props.theme.timerFace};
     margin-bottom: 16px;
 `;
 
 export const PreviewTime = styled.Text.attrs({
 })`
-    font-family: Bold;
+    font-family: SemiBold;
     font-size: 40px;
-    color: ${props => props.theme.timerFaceText};
+    color: ${props => props.textHex || props.theme.timerFaceText};
     text-align: center;
 `;
 
@@ -275,4 +277,31 @@ export const GestureText = styled.Text.attrs({
     font-size: 14px;
     line-height: 22px;
     color: ${props => props.theme.timerTextMuted};
+`;
+
+export const CustomizeCard = styled.View.attrs({
+})`
+    padding: 20px 18px 18px;
+    border-radius: 24px;
+    background: ${props => props.theme.timerSurface};
+    border-width: 1px;
+    border-color: ${props => props.theme.lightshadow};
+    margin-bottom: 18px;
+`;
+
+export const CustomizeTitle = styled.Text.attrs({
+})`
+    font-family: Bold;
+    font-size: 18px;
+    color: ${props => props.theme.black};
+    margin-bottom: 8px;
+`;
+
+export const CustomizeHint = styled.Text.attrs({
+})`
+    font-family: Regular;
+    font-size: 14px;
+    line-height: 22px;
+    color: ${props => props.theme.timerTextMuted};
+    margin-bottom: 18px;
 `;

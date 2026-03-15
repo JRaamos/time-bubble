@@ -42,6 +42,7 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
         super.onCreate()
         createNotificationChannel()
         overlayManager = FloatingTimerOverlayManager(this, this)
+        activeInstance = this
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -65,6 +66,9 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
         overlayManager = null
         FloatingTimerStateStore.isOverlayVisible = false
         FloatingTimerEventDispatcher.emitState()
+        if (activeInstance === this) {
+            activeInstance = null
+        }
         super.onDestroy()
     }
 
@@ -111,6 +115,7 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
     private fun showOverlay() {
         startForeground(NOTIFICATION_ID, buildNotification())
         overlayManager?.show()
+        overlayManager?.applyAppearance()
         overlayManager?.updateTimeText(formatElapsed(FloatingTimerStateStore.getElapsedMs()))
 
         FloatingTimerStateStore.isOverlayVisible = true
@@ -199,6 +204,7 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
     companion object {
         private const val CHANNEL_ID = "floating_timer_overlay"
         private const val NOTIFICATION_ID = 1201
+        private var activeInstance: FloatingTimerService? = null
 
         const val ACTION_HIDE = "br.com.xapps.timebubble.floatingtimer.HIDE"
         const val ACTION_SHOW = "br.com.xapps.timebubble.floatingtimer.SHOW"
@@ -217,6 +223,10 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
             }
 
             context.startService(intent)
+        }
+
+        fun refreshAppearance() {
+            activeInstance?.overlayManager?.applyAppearance()
         }
     }
 }

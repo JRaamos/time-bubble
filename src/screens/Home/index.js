@@ -1,12 +1,16 @@
 import React from 'react'
 
 import ContainerAuthenticated from '@containers/Authenticated'
+import ColorPicker from '@components/ColorPicker'
 
 import useController from './controller'
 
 import {
     BrandBubble,
     BrandCopy,
+    CustomizeCard,
+    CustomizeHint,
+    CustomizeTitle,
     Eyebrow,
     GestureBullet,
     GestureList,
@@ -39,16 +43,22 @@ import {
     SummaryValue,
 } from './styled'
 
-export default function Home(){
+export default function Home() {
     const {
         busy,
+        backgroundHex,
         formattedElapsed,
+        handleCommitBackground,
+        handleCommitText,
         handleHideOverlay,
         handlePrimaryAction,
+        handlePreviewBackground,
+        handlePreviewText,
         loading,
         overlayVisible,
         permissionGranted,
         platformIsAndroid,
+        textHex,
         timerRunning,
     } = useController()
 
@@ -70,54 +80,10 @@ export default function Home(){
                     </HeroText>
                     <PrimaryAction disabled={busy || !platformIsAndroid} onPress={handlePrimaryAction}>
                         <PrimaryActionText>
-                            { !platformIsAndroid ? 'Disponivel apenas no Android' : permissionGranted ? 'Abrir cronometro flutuante' : 'Liberar permissao de sobreposicao' }
+                            {!platformIsAndroid ? 'Disponivel apenas no Android' : permissionGranted ? 'Abrir cronometro flutuante' : 'Liberar permissao de sobreposicao'}
                         </PrimaryActionText>
                     </PrimaryAction>
                 </Hero>
-
-                <SummaryGrid>
-                    <SummaryCard active={permissionGranted}>
-                        <SummaryLabel>Permissao</SummaryLabel>
-                        <SummaryValue>{ permissionGranted ? 'Liberada' : 'Pendente' }</SummaryValue>
-                        <SummaryText>
-                            { permissionGranted ? 'O Android ja autorizou a sobreposicao e o card pode ser aberto acima de outros apps.' : 'Ao tocar no botao, o app abre a configuracao do Android para liberar a sobreposicao.' }
-                        </SummaryText>
-                    </SummaryCard>
-                    <SummaryCard active={overlayVisible}>
-                        <SummaryLabel>Overlay</SummaryLabel>
-                        <SummaryValue>{ overlayVisible ? 'Ativo agora' : 'Fechado' }</SummaryValue>
-                        <SummaryText>
-                            { overlayVisible ? 'O service nativo esta vivo e o card continua contando mesmo com o app em segundo plano.' : 'Quando aberto, o cronometro fica em foreground service para reduzir interrupcoes do sistema.' }
-                        </SummaryText>
-                    </SummaryCard>
-                </SummaryGrid>
-
-                <Preview>
-                    <PreviewHeader>
-                        <PreviewTitle>Estado do cronometro</PreviewTitle>
-                        <PreviewTag active={overlayVisible}>
-                            <PreviewTagText>{ timerRunning ? 'Rodando' : overlayVisible ? 'Pausado' : 'Pronto' }</PreviewTagText>
-                        </PreviewTag>
-                    </PreviewHeader>
-                    <PreviewBubble>
-                        <PreviewTime>{ formattedElapsed }</PreviewTime>
-                    </PreviewBubble>
-                    <PreviewHint>
-                        { loading ? 'Sincronizando o estado atual do cronometro.' : permissionGranted ? 'Depois de abrir o card, o controle principal acontece diretamente no overlay nativo.' : 'Se o aparelho nao expuser essa permissao, o Android pode bloquear esse recurso no proprio sistema.' }
-                    </PreviewHint>
-                    {
-                        overlayVisible ? (
-                            <InlineActions>
-                                <SecondaryAction first onPress={handlePrimaryAction}>
-                                    <SecondaryActionText>Trazer de volta</SecondaryActionText>
-                                </SecondaryAction>
-                                <SecondaryAction danger onPress={handleHideOverlay}>
-                                    <SecondaryActionText>Fechar overlay</SecondaryActionText>
-                                </SecondaryAction>
-                            </InlineActions>
-                        ) : null
-                    }
-                </Preview>
 
                 <GestureList>
                     <GestureTitle>Gestos do card</GestureTitle>
@@ -146,6 +112,74 @@ export default function Home(){
                         <GestureText>Quando o botao aparecer, tocar no cronometro fora dele apenas esconde o fechamento.</GestureText>
                     </GestureRow>
                 </GestureList>
+                <SummaryGrid>
+                    <SummaryCard active={permissionGranted}>
+                        <SummaryLabel>Permissao</SummaryLabel>
+                        <SummaryValue>{permissionGranted ? 'Liberada' : 'Pendente'}</SummaryValue>
+                        <SummaryText>
+                            {permissionGranted ? 'O Android ja autorizou a sobreposicao e o card pode ser aberto acima de outros apps.' : 'Ao tocar no botao, o app abre a configuracao do Android para liberar a sobreposicao.'}
+                        </SummaryText>
+                    </SummaryCard>
+                    <SummaryCard active={overlayVisible}>
+                        <SummaryLabel>Overlay</SummaryLabel>
+                        <SummaryValue>{overlayVisible ? 'Ativo agora' : 'Fechado'}</SummaryValue>
+                        <SummaryText>
+                            {overlayVisible ? 'O service nativo esta vivo e o card continua contando mesmo com o app em segundo plano.' : 'Quando aberto, o cronometro fica em foreground service para reduzir interrupcoes do sistema.'}
+                        </SummaryText>
+                    </SummaryCard>
+                </SummaryGrid>
+
+                <Preview>
+                    <PreviewHeader>
+                        <PreviewTitle>Estado do cronometro</PreviewTitle>
+                        <PreviewTag active={overlayVisible}>
+                            <PreviewTagText>{timerRunning ? 'Rodando' : overlayVisible ? 'Pausado' : 'Pronto'}</PreviewTagText>
+                        </PreviewTag>
+                    </PreviewHeader>
+                    <PreviewBubble backgroundHex={backgroundHex}>
+                        <PreviewTime textHex={textHex}>{formattedElapsed}</PreviewTime>
+                    </PreviewBubble>
+                    <PreviewHint>
+                        {loading ? 'Sincronizando o estado atual do cronometro.' : permissionGranted ? 'Depois de abrir o card, o controle principal acontece diretamente no overlay nativo.' : 'Se o aparelho nao expuser essa permissao, o Android pode bloquear esse recurso no proprio sistema.'}
+                    </PreviewHint>
+                    {
+                        overlayVisible ? (
+                            <InlineActions>
+                                <SecondaryAction first onPress={handlePrimaryAction}>
+                                    <SecondaryActionText>Trazer de volta</SecondaryActionText>
+                                </SecondaryAction>
+                                <SecondaryAction danger onPress={handleHideOverlay}>
+                                    <SecondaryActionText>Fechar overlay</SecondaryActionText>
+                                </SecondaryAction>
+                            </InlineActions>
+                        ) : null
+                    }
+                </Preview>
+
+                <CustomizeCard>
+                    <CustomizeTitle>Visual do floating</CustomizeTitle>
+                    <CustomizeHint>
+                        A escolha acontece na tela React Native, mas as cores sao salvas no aparelho e aplicadas no overlay nativo.
+                    </CustomizeHint>
+
+                    <ColorPicker
+                        hint="Defina a cor real do card flutuante com toque e arraste."
+                        label="Cor do floating"
+                        onChange={handlePreviewBackground}
+                        onComplete={handleCommitBackground}
+                        value={backgroundHex}
+                    />
+
+                    <ColorPicker
+                        hint="Escolha a cor exata dos numeros para manter contraste e leitura."
+                        label="Cor dos numeros"
+                        last
+                        onChange={handlePreviewText}
+                        onComplete={handleCommitText}
+                        value={textHex}
+                    />
+                </CustomizeCard>
+
             </Screen>
         </ContainerAuthenticated>
     )

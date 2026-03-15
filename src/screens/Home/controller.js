@@ -3,10 +3,12 @@ import { AppState, Platform } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
 
 import {
+    getFloatingTimerAppearance,
     getFloatingTimerState,
     getOverlayPermissionStatus,
     hideFloatingTimer,
     openOverlayPermissionSettings,
+    setFloatingTimerAppearance,
     showFloatingTimer,
     subscribeFloatingTimerState,
 } from '@services/floatingTimer'
@@ -21,6 +23,8 @@ const formatElapsedTime = elapsedMs => {
 
 export default function useController(){
     const appState = useRef(AppState.currentState)
+    const backgroundHexRef = useRef('#171C27')
+    const textHexRef = useRef('#F9FBFF')
 
     const [loading, setLoading] = useState(true)
     const [busy, setBusy] = useState(false)
@@ -28,6 +32,16 @@ export default function useController(){
     const [overlayVisible, setOverlayVisible] = useState(false)
     const [timerRunning, setTimerRunning] = useState(false)
     const [elapsedMs, setElapsedMs] = useState(0)
+    const [backgroundHex, setBackgroundHex] = useState('#171C27')
+    const [textHex, setTextHex] = useState('#F9FBFF')
+
+    useEffect(() => {
+        backgroundHexRef.current = backgroundHex
+    }, [backgroundHex])
+
+    useEffect(() => {
+        textHexRef.current = textHex
+    }, [textHex])
 
     const syncState = useCallback(async () => {
         if (Platform.OS !== 'android') {
@@ -37,11 +51,14 @@ export default function useController(){
 
         const permission = await getOverlayPermissionStatus()
         const state = await getFloatingTimerState()
+        const appearance = await getFloatingTimerAppearance()
 
         setPermissionGranted(!!permission)
         setOverlayVisible(!!state?.visible)
         setTimerRunning(!!state?.running)
         setElapsedMs(typeof state?.elapsedMs === 'number' ? state.elapsedMs : 0)
+        setBackgroundHex(appearance?.backgroundHex || '#171C27')
+        setTextHex(appearance?.textHex || '#F9FBFF')
         setLoading(false)
     }, [])
 
@@ -115,16 +132,52 @@ export default function useController(){
         }
     }
 
+    const handlePreviewBackground = hex => {
+        setBackgroundHex(hex)
+    }
+
+    const handleCommitBackground = async hex => {
+        setBackgroundHex(hex)
+
+        try {
+            await setFloatingTimerAppearance(hex, textHexRef.current)
+        } catch (error) {
+            console.error('[FloatingTimer] handleCommitBackground:error', error)
+            syncState()
+        }
+    }
+
+    const handlePreviewText = hex => {
+        setTextHex(hex)
+    }
+
+    const handleCommitText = async hex => {
+        setTextHex(hex)
+
+        try {
+            await setFloatingTimerAppearance(backgroundHexRef.current, hex)
+        } catch (error) {
+            console.error('[FloatingTimer] handleCommitText:error', error)
+            syncState()
+        }
+    }
+
     return {
+        backgroundHex,
         busy,
         elapsedMs,
         formattedElapsed: formatElapsedTime(elapsedMs),
         handleHideOverlay,
         handlePrimaryAction,
+        handleCommitBackground,
+        handleCommitText,
+        handlePreviewBackground,
+        handlePreviewText,
         loading,
         overlayVisible,
         permissionGranted,
         platformIsAndroid: Platform.OS === 'android',
+        textHex,
         timerRunning,
     }
 }

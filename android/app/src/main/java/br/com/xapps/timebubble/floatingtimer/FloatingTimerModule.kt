@@ -106,6 +106,31 @@ class FloatingTimerModule(
     }
 
     @ReactMethod
+    fun getFloatingTimerAppearance(promise: Promise) {
+        val map = Arguments.createMap().apply {
+            putString("backgroundHex", FloatingTimerAppearanceStore.getBackgroundHex(reactApplicationContext))
+            putString("textHex", FloatingTimerAppearanceStore.getTextHex(reactApplicationContext))
+        }
+        promise.resolve(map)
+    }
+
+    @ReactMethod
+    fun setFloatingTimerAppearance(backgroundHex: String, textHex: String, promise: Promise) {
+        try {
+            FloatingTimerAppearanceStore.save(
+                reactApplicationContext,
+                backgroundHex,
+                textHex,
+            )
+            FloatingTimerService.refreshAppearance()
+            promise.resolve(true)
+        } catch (error: Exception) {
+            Log.e(TAG, "setFloatingTimerAppearance:error", error)
+            promise.reject("set_floating_timer_appearance_failed", error)
+        }
+    }
+
+    @ReactMethod
     fun addListener(eventName: String) {}
 
     @ReactMethod
