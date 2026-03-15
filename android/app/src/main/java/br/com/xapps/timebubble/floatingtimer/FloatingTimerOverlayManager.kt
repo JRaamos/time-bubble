@@ -312,7 +312,7 @@ class FloatingTimerOverlayManager(
 
     private fun applyScale(scale: Float) {
         val cardPaddingHorizontal = (dpToPx(22) * scale).toInt()
-        val cardPaddingVertical = (dpToPx(20) * scale).toInt()
+        val cardPaddingVertical = (dpToPx(8) * scale).toInt()
         val cardRadius = dpToPx(22) * scale
         val cardStroke = (dpToPx(1) * scale).toInt().coerceAtLeast(1)
         val cardElevation = dpToPx(12) * scale
