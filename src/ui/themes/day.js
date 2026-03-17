@@ -14,4 +14,9 @@ export const day = {
     'inputlabel': '#B3B3B3',
     'inputtext': '#333333',
     'inputbackground': '#F2F2F2',
+    'timerScreen':'#101319',
+    'timerSurface':'#171C24',
+    'timerSurfaceSoft':'#222933',
+    'timerBorder':'#2E9CC3',
+    'timerTextMuted':'#9AA7B5',
 }  

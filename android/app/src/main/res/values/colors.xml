@@ -1,0 +1,17 @@
+<resources>
+  <color name="splashscreen_background">#fff</color>
+  <color name="iconBackground">#ffffff</color>
+  <color name="colorPrimary">#023c69</color>
+  <color name="colorPrimaryDark">#fff</color>
+  <color name="notification_icon_color">#ffffff</color>
+  <color name="floating_timer_background">#171C27</color>
+  <color name="floating_timer_border">#44B6E8</color>
+  <color name="floating_timer_text">#F9FBFF</color>
+  <color name="floating_timer_close_background">#CE5657</color>
+  <color name="floating_timer_background_graphite">#262B33</color>
+  <color name="floating_timer_background_forest">#183127</color>
+  <color name="floating_timer_background_sunset">#3B2627</color>
+  <color name="floating_timer_text_amber">#FFD37A</color>
+  <color name="floating_timer_text_mint">#9EF2D8</color>
+  <color name="floating_timer_text_rose">#FFC4D0</color>
+</resources>

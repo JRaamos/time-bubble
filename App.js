@@ -1,54 +1,68 @@
-
-import React, { useState, useEffect } from 'react';
+import 'react-native-gesture-handler';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Easing } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import Toast from 'react-native-toast-message';
+import * as SplashScreen from 'expo-splash-screen';
 
-import * as SplashScreen from 'expo-splash-screen'
-
-import { ThemeContext } from '@ui/themes/context'; 
-import { loadFonts } from '@assets/fonts/Default'
-import { loadImages } from '@assets/images'
-
-import Router from '@router'
+import { ThemeContext } from '@ui/themes/context';
+import { loadFonts } from '@assets/fonts/Default';
+import LaunchSplash from '@components/LaunchSplash';
+import Router from '@router';
 import { navigationRef } from '@router/root';
 
-import AppContext from '@context'
-import ModalController from '@components/Modal/Controller'
-import { LogBox } from 'react-native';
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
-const originalWarn = console.error;
-console.error = (...args) => {
-  if ( typeof args[0] === 'string' && args[0].indexOf('Invalid prop `style` supplied to `React.Fragment`') !== -1 ) {
-    return; // ignora
-  }
-  originalWarn(...args);
-};
+export default function App() {
+  const [loading, setLoading] = useState(true);
+  const [navigationReady, setNavigationReady] = useState(false);
+  const [showLaunchSplash, setShowLaunchSplash] = useState(true);
+  const splashOpacity = useRef(new Animated.Value(1)).current;
 
-LogBox.ignoreAllLogs(true)
-export default function App() { 
-    const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    let mounted = true;
 
     const initApplication = async () => {
-      SplashScreen.preventAutoHideAsync(); 
-        await loadImages() 
-        await loadFonts() 
-        setLoading(false)
-      SplashScreen.hideAsync();
+      try {
+        await loadFonts();
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    initApplication();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (loading || !navigationReady) {
+      return;
     }
 
-    useEffect(() => {
-      initApplication()
-    },[]);
+    SplashScreen.hideAsync().catch(() => {});
 
-  return loading ? null : (  
-    <NavigationContainer ref={navigationRef}>
-        <AppContext>
-            <ThemeContext> 
-              <Router />
-              <ModalController />
-              <Toast />
-            </ThemeContext>
-        </AppContext>
-    </NavigationContainer>  
+    Animated.timing(splashOpacity, {
+      toValue: 0,
+      duration: 260,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished) {
+        setShowLaunchSplash(false);
+      }
+    });
+  }, [loading, navigationReady, splashOpacity]);
+
+  return loading ? null : (
+    <ThemeContext>
+      <NavigationContainer ref={navigationRef} onReady={() => setNavigationReady(true)}>
+        <Router />
+        {showLaunchSplash ? <LaunchSplash opacity={splashOpacity} /> : null}
+      </NavigationContainer>
+    </ThemeContext>
   );
 }

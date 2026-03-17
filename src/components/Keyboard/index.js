@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Keyboard, View, Platform } from "react-native";
+import { Keyboard, Platform } from "react-native";
  
 import { headerHeightIOS } from "@ui/styled";
-
-import { UIManager, LayoutAnimation } from 'react-native';
-
-UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+import { Spacer } from './styled';
 
 export default function KeyboardSafe(){
 
@@ -13,13 +10,11 @@ export default function KeyboardSafe(){
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", (e) => { 
-        LayoutAnimation.spring(() => { });
         if(Platform.OS === 'ios'){
           setKeyboardHeight( e.endCoordinates.height - ( headerHeightIOS ) ); 
         }
     });
     const hideSubscription = Keyboard.addListener("keyboardDidHide", () => { 
-        LayoutAnimation.spring(() => { });
         setKeyboardHeight( 0 ); 
     });
 
@@ -29,7 +24,5 @@ export default function KeyboardSafe(){
     };
   }, []);
 
-  return (
-    <View style={{ height: keyboardHeight }} />
-  );
+  return <Spacer keyboardHeight={keyboardHeight} />;
 }  

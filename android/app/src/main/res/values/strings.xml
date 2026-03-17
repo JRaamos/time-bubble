@@ -1,0 +1,13 @@
+<resources>
+  <string name="app_name">TimeBubble – Cronômetro</string>
+  <string name="expo_system_ui_user_interface_style" translatable="false">automatic</string>
+  <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
+  <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+  <string name="floating_timer_channel_name">Cronometro flutuante</string>
+  <string name="floating_timer_channel_description">Mantem o cronometro flutuante ativo sobre outros aplicativos.</string>
+  <string name="floating_timer_notification_title">Cronometro flutuante ativo</string>
+  <string name="floating_timer_notification_text">Toque para voltar ao app ou feche o overlay pela notificacao.</string>
+  <string name="floating_timer_notification_close">Fechar</string>
+  <string name="floating_timer_close_button">X</string>
+  <string name="expo_runtime_version">1.0.0</string>
+</resources>
