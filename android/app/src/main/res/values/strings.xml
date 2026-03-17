@@ -9,4 +9,5 @@
   <string name="floating_timer_notification_text">Toque para voltar ao app ou feche o overlay pela notificacao.</string>
   <string name="floating_timer_notification_close">Fechar</string>
   <string name="floating_timer_close_button">X</string>
+  <string name="expo_runtime_version">1.0.0</string>
 </resources>
