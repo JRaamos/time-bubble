@@ -1,4 +1,5 @@
 import styled from 'styled-components/native'
+import QRCode from 'react-native-qrcode-svg'
 
 import Icon from '@assets/icons'
 
@@ -97,7 +98,6 @@ export const PrimaryActionIcon = styled(Icon).attrs(props => ({
     stroke: props.theme.timerFace,
     fill: 'transparent',
 }))`
-    margin-right: 10px;
 `;
 
 export const SummaryGrid = styled.View.attrs({
@@ -304,4 +304,112 @@ export const CustomizeHint = styled.Text.attrs({
     line-height: 22px;
     color: ${props => props.theme.timerTextMuted};
     margin-bottom: 18px;
+`;
+
+export const DonationCard = styled.View.attrs({
+})`
+    padding: 20px 18px 18px;
+    border-radius: 24px;
+    background: ${props => props.theme.timerSurface};
+    border-width: 1px;
+    border-color: ${props => props.theme.lightshadow};
+    margin-bottom: 18px;
+`;
+
+export const DonationEyebrow = styled.Text.attrs({
+})`
+    font-family: Regular;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: ${props => props.theme.timerAccentSoft};
+    margin-bottom: 8px;
+`;
+
+export const DonationTitle = styled.Text.attrs({
+})`
+    font-family: Bold;
+    font-size: 22px;
+    line-height: 28px;
+    color: ${props => props.theme.black};
+    margin-bottom: 10px;
+`;
+
+export const DonationHint = styled.Text.attrs({
+})`
+    font-family: Regular;
+    font-size: 15px;
+    line-height: 24px;
+    color: ${props => props.theme.timerTextMuted};
+    margin-bottom: 18px;
+`;
+
+export const DonationQrFrame = styled.View.attrs({
+})`
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    border-radius: 24px;
+    background: ${props => props.theme.timerSurfaceSoft};
+    border-width: 1px;
+    border-color: ${props => props.theme.lightshadow};
+    margin-bottom: 16px;
+`;
+
+export const DonationQrCode = styled(QRCode).attrs(props => ({
+    backgroundColor: props.theme.pickerWhite,
+    color: props.theme.pickerBlack,
+    size: 220,
+}))``;
+
+export const DonationButton = styled.TouchableOpacity.attrs({
+    activeOpacity: 0.82,
+})`
+    min-height: 52px;
+    border-radius: 16px;
+    background: ${props => props.theme.timerAccent};
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+`;
+
+export const DonationButtonIcon = styled(Icon).attrs(props => ({
+    icon: 'copy',
+    width: 18,
+    height: 18,
+    stroke: props.theme.timerFace,
+    fill: 'transparent',
+}))`
+    margin-right: 10px;
+`;
+
+export const DonationButtonText = styled.Text.attrs({
+})`
+    font-family: Bold;
+    font-size: 17px;
+    color: ${props => props.theme.timerFace};
+`;
+
+export const DonationCopy = styled.View.attrs({
+})`
+    margin-bottom: 14px;
+`;
+
+export const DonationLabel = styled.Text.attrs({
+})`
+    font-family: Regular;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: ${props => props.theme.timerTextMuted};
+    margin-bottom: 6px;
+`;
+
+export const DonationValue = styled.Text.attrs({
+})`
+    font-family: Bold;
+    font-size: 16px;
+    line-height: 24px;
+    color: ${props => props.theme.black};
 `;

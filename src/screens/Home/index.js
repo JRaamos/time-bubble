@@ -11,6 +11,18 @@ import {
     CustomizeCard,
     CustomizeHint,
     CustomizeTitle,
+    DonationButton,
+    DonationButtonIcon,
+    DonationButtonText,
+    DonationCard,
+    DonationCopy,
+    DonationEyebrow,
+    DonationHint,
+    DonationLabel,
+    DonationQrFrame,
+    DonationQrCode,
+    DonationTitle,
+    DonationValue,
     Eyebrow,
     GestureBullet,
     GestureList,
@@ -50,6 +62,7 @@ export default function Home() {
         formattedElapsed,
         handleCommitBackground,
         handleCommitText,
+        handleCopyPixKey,
         handleHideOverlay,
         handlePrimaryAction,
         handlePreviewBackground,
@@ -58,6 +71,10 @@ export default function Home() {
         overlayVisible,
         permissionGranted,
         platformIsAndroid,
+        pixCopied,
+        pixPayload,
+        pixKey,
+        pixOwner,
         textHex,
         timerRunning,
     } = useController()
@@ -179,6 +196,33 @@ export default function Home() {
                         value={textHex}
                     />
                 </CustomizeCard>
+
+                <DonationCard>
+                    <DonationEyebrow>Apoie o desenvolvimento</DonationEyebrow>
+                    <DonationTitle>Pix para contribuir com o app</DonationTitle>
+                    <DonationHint>
+                        Se o TimeBubble estiver sendo util para voce, pode apoiar a evolucao do projeto com um Pix.
+                    </DonationHint>
+
+                    <DonationQrFrame>
+                        <DonationQrCode value={pixPayload} />
+                    </DonationQrFrame>
+
+                    <DonationButton onPress={handleCopyPixKey}>
+                        <DonationButtonIcon />
+                        <DonationButtonText>{pixCopied ? 'Chave Pix copiada' : 'Copiar chave Pix'}</DonationButtonText>
+                    </DonationButton>
+
+                    <DonationCopy>
+                        <DonationLabel>Nome</DonationLabel>
+                        <DonationValue>{pixOwner}</DonationValue>
+                    </DonationCopy>
+
+                    <DonationCopy>
+                        <DonationLabel>Chave Pix</DonationLabel>
+                        <DonationValue>{pixKey}</DonationValue>
+                    </DonationCopy>
+                </DonationCard>
 
             </Screen>
         </ContainerAuthenticated>

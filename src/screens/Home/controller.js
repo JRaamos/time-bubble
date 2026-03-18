@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AppState, Platform } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
+import * as Clipboard from 'expo-clipboard'
 
 import {
     getFloatingTimerAppearance,
@@ -39,6 +40,7 @@ export default function useController(){
     const appState = useRef(AppState.currentState)
     const backgroundHexRef = useRef('#171C27')
     const textHexRef = useRef('#F9FBFF')
+    const pixCopiedTimeout = useRef(null)
 
     const [loading, setLoading] = useState(true)
     const [busy, setBusy] = useState(false)
@@ -48,6 +50,7 @@ export default function useController(){
     const [elapsedMs, setElapsedMs] = useState(0)
     const [backgroundHex, setBackgroundHex] = useState('#171C27')
     const [textHex, setTextHex] = useState('#F9FBFF')
+    const [pixCopied, setPixCopied] = useState(false)
 
     useEffect(() => {
         backgroundHexRef.current = backgroundHex
@@ -56,6 +59,14 @@ export default function useController(){
     useEffect(() => {
         textHexRef.current = textHex
     }, [textHex])
+
+    useEffect(() => {
+        return () => {
+            if (pixCopiedTimeout.current) {
+                clearTimeout(pixCopiedTimeout.current)
+            }
+        }
+    }, [])
 
     const syncState = useCallback(async () => {
         if (Platform.OS !== 'android') {
@@ -176,6 +187,23 @@ export default function useController(){
         }
     }
 
+    const handleCopyPixKey = async () => {
+        try {
+            await Clipboard.setStringAsync('3a10aa75-dd23-4fb2-8e70-099fb02fadf3')
+            setPixCopied(true)
+
+            if (pixCopiedTimeout.current) {
+                clearTimeout(pixCopiedTimeout.current)
+            }
+
+            pixCopiedTimeout.current = setTimeout(() => {
+                setPixCopied(false)
+            }, 2200)
+        } catch (error) {
+            debugError('handleCopyPixKey:error', error)
+        }
+    }
+
     return {
         backgroundHex,
         busy,
@@ -185,12 +213,17 @@ export default function useController(){
         handlePrimaryAction,
         handleCommitBackground,
         handleCommitText,
+        handleCopyPixKey,
         handlePreviewBackground,
         handlePreviewText,
         loading,
         overlayVisible,
         permissionGranted,
         platformIsAndroid: Platform.OS === 'android',
+        pixCopied,
+        pixPayload: '00020101021126580014br.gov.bcb.pix01363a10aa75-dd23-4fb2-8e70-099fb02fadf35204000053039865802BR5918JONATHAN R FEBRAIO6009TANQUINHO62070503***63040D84',
+        pixKey: '3a10aa75-dd23-4fb2-8e70-099fb02fadf3',
+        pixOwner: 'JONATHAN RAMOS FEBRAIO',
         textHex,
         timerRunning,
     }
