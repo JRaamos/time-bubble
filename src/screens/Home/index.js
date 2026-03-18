@@ -88,8 +88,8 @@ export default function Home() {
                             <PrimaryActionIcon />
                         </BrandBubble>
                         <BrandCopy>
-                            <Eyebrow>TimeBubble</Eyebrow>
-                            <HeroTitle>Cronometro flutuante</HeroTitle>
+                            <Eyebrow>Cronômetro flutuante</Eyebrow>
+                            <HeroTitle>Cronômetro flutuante</HeroTitle>
                         </BrandCopy>
                     </HeroRow>
                     <HeroText>
