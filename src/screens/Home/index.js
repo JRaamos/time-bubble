@@ -2,6 +2,7 @@ import React from 'react'
 
 import ContainerAuthenticated from '@containers/Authenticated'
 import ColorPicker from '@components/ColorPicker'
+import Toggle from '@components/Form/Toggle'
 
 import useController from './controller'
 
@@ -10,6 +11,12 @@ import {
     BrandCopy,
     CustomizeCard,
     CustomizeHint,
+    CustomizeToggle,
+    CustomizeToggleCopy,
+    CustomizeToggleHint,
+    CustomizeToggleLabel,
+    CustomizeToggleMarker,
+    CustomizeToggleRow,
     CustomizeTitle,
     DonationButton,
     DonationButtonIcon,
@@ -33,21 +40,10 @@ import {
     HeroRow,
     HeroText,
     HeroTitle,
-    InlineActions,
-    Preview,
-    PreviewBubble,
-    PreviewHeader,
-    PreviewHint,
-    PreviewTag,
-    PreviewTagText,
-    PreviewTime,
-    PreviewTitle,
     PrimaryAction,
     PrimaryActionIcon,
     PrimaryActionText,
     Screen,
-    SecondaryAction,
-    SecondaryActionText,
     SummaryCard,
     SummaryGrid,
     SummaryLabel,
@@ -59,15 +55,13 @@ export default function Home() {
     const {
         busy,
         backgroundHex,
-        formattedElapsed,
         handleCommitBackground,
         handleCommitText,
         handleCopyPixKey,
-        handleHideOverlay,
         handlePrimaryAction,
         handlePreviewBackground,
         handlePreviewText,
-        loading,
+        handleToggleMilliseconds,
         overlayVisible,
         permissionGranted,
         platformIsAndroid,
@@ -75,8 +69,8 @@ export default function Home() {
         pixPayload,
         pixKey,
         pixOwner,
+        showMilliseconds,
         textHex,
-        timerRunning,
     } = useController()
 
     return (
@@ -110,7 +104,7 @@ export default function Home() {
                     </GestureRow>
                     <GestureRow>
                         <GestureBullet />
-                        <GestureText>Duplo toque zera imediatamente para 00:00.000.</GestureText>
+                        <GestureText>Duplo toque zera imediatamente o cronometro.</GestureText>
                     </GestureRow>
                     <GestureRow>
                         <GestureBullet />
@@ -146,38 +140,27 @@ export default function Home() {
                     </SummaryCard>
                 </SummaryGrid>
 
-                <Preview>
-                    <PreviewHeader>
-                        <PreviewTitle>Estado do cronometro</PreviewTitle>
-                        <PreviewTag active={overlayVisible}>
-                            <PreviewTagText>{timerRunning ? 'Rodando' : overlayVisible ? 'Pausado' : 'Pronto'}</PreviewTagText>
-                        </PreviewTag>
-                    </PreviewHeader>
-                    <PreviewBubble backgroundHex={backgroundHex}>
-                        <PreviewTime textHex={textHex}>{formattedElapsed}</PreviewTime>
-                    </PreviewBubble>
-                    <PreviewHint>
-                        {loading ? 'Sincronizando o estado atual do cronometro.' : permissionGranted ? 'Depois de abrir o card, o controle principal acontece diretamente no overlay nativo.' : 'Se o aparelho nao expuser essa permissao, o Android pode bloquear esse recurso no proprio sistema.'}
-                    </PreviewHint>
-                    {
-                        overlayVisible ? (
-                            <InlineActions>
-                                <SecondaryAction first onPress={handlePrimaryAction}>
-                                    <SecondaryActionText>Trazer de volta</SecondaryActionText>
-                                </SecondaryAction>
-                                <SecondaryAction danger onPress={handleHideOverlay}>
-                                    <SecondaryActionText>Fechar overlay</SecondaryActionText>
-                                </SecondaryAction>
-                            </InlineActions>
-                        ) : null
-                    }
-                </Preview>
-
                 <CustomizeCard>
                     <CustomizeTitle>Visual do floating</CustomizeTitle>
                     <CustomizeHint>
                         A escolha acontece na tela React Native, mas as cores sao salvas no aparelho e aplicadas no overlay nativo.
                     </CustomizeHint>
+
+                    <CustomizeToggle active={showMilliseconds}>
+                        <CustomizeToggleRow>
+                            <CustomizeToggleMarker active={showMilliseconds}>000</CustomizeToggleMarker>
+                            <CustomizeToggleCopy>
+                                <CustomizeToggleLabel>Mostrar Milissegundos</CustomizeToggleLabel>
+                                <CustomizeToggleHint active={showMilliseconds}>
+                                    Quando o floating estiver aberto, a mudanca acontece na hora no cronometro.
+                                </CustomizeToggleHint>
+                            </CustomizeToggleCopy>
+                            <Toggle disabled={busy} onChange={handleToggleMilliseconds} timer value={showMilliseconds} />
+                        </CustomizeToggleRow>
+                        <CustomizeToggleHint subtle>
+                            Desligado por padrao em mm:ss. Ative apenas quando quiser mais precisao na leitura.
+                        </CustomizeToggleHint>
+                    </CustomizeToggle>
 
                     <ColorPicker
                         hint="Defina a cor real do card flutuante com toque e arraste."

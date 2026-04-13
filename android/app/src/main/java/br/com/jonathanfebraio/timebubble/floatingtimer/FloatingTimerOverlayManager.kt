@@ -354,8 +354,12 @@ class FloatingTimerOverlayManager(
     private fun formatElapsed(elapsedMs: Long): String {
         val minutes = elapsedMs / 60000
         val seconds = (elapsedMs % 60000) / 1000
-        val milliseconds = elapsedMs % 1000
 
+        if (!FloatingTimerAppearanceStore.getShowMilliseconds(context)) {
+            return String.format("%02d:%02d", minutes, seconds)
+        }
+
+        val milliseconds = elapsedMs % 1000
         return String.format("%02d:%02d.%03d", minutes, seconds, milliseconds)
     }
 

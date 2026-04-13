@@ -10,6 +10,7 @@ import {
     hideFloatingTimer,
     openOverlayPermissionSettings,
     setFloatingTimerAppearance,
+    setFloatingTimerShowMilliseconds,
     showFloatingTimer,
     subscribeFloatingTimerState,
 } from '@services/floatingTimer'
@@ -28,11 +29,15 @@ const debugError = (event, error) => {
     }
 }
 
-const formatElapsedTime = elapsedMs => {
+const formatElapsedTime = (elapsedMs, showMilliseconds) => {
     const minutes = Math.floor(elapsedMs / 60000)
     const seconds = Math.floor((elapsedMs % 60000) / 1000)
-    const milliseconds = Math.floor(elapsedMs % 1000)
 
+    if (!showMilliseconds) {
+        return `${ String(minutes).padStart(2, '0') }:${ String(seconds).padStart(2, '0') }`
+    }
+
+    const milliseconds = Math.floor(elapsedMs % 1000)
     return `${ String(minutes).padStart(2, '0') }:${ String(seconds).padStart(2, '0') }.${ String(milliseconds).padStart(3, '0') }`
 }
 
@@ -50,6 +55,7 @@ export default function useController(){
     const [elapsedMs, setElapsedMs] = useState(0)
     const [backgroundHex, setBackgroundHex] = useState('#171C27')
     const [textHex, setTextHex] = useState('#F9FBFF')
+    const [showMilliseconds, setShowMilliseconds] = useState(false)
     const [pixCopied, setPixCopied] = useState(false)
 
     useEffect(() => {
@@ -84,6 +90,7 @@ export default function useController(){
         setElapsedMs(typeof state?.elapsedMs === 'number' ? state.elapsedMs : 0)
         setBackgroundHex(appearance?.backgroundHex || '#171C27')
         setTextHex(appearance?.textHex || '#F9FBFF')
+        setShowMilliseconds(!!appearance?.showMilliseconds)
         setLoading(false)
     }, [])
 
@@ -187,6 +194,20 @@ export default function useController(){
         }
     }
 
+    const handleToggleMilliseconds = async value => {
+        setShowMilliseconds(!!value)
+
+        try {
+            await setFloatingTimerShowMilliseconds(!!value)
+        } catch (error) {
+            debugError('handleToggleMilliseconds:error', error)
+            syncState()
+            return
+        }
+
+        syncState()
+    }
+
     const handleCopyPixKey = async () => {
         try {
             await Clipboard.setStringAsync('3a10aa75-dd23-4fb2-8e70-099fb02fadf3')
@@ -208,7 +229,7 @@ export default function useController(){
         backgroundHex,
         busy,
         elapsedMs,
-        formattedElapsed: formatElapsedTime(elapsedMs),
+        formattedElapsed: formatElapsedTime(elapsedMs, showMilliseconds),
         handleHideOverlay,
         handlePrimaryAction,
         handleCommitBackground,
@@ -216,6 +237,7 @@ export default function useController(){
         handleCopyPixKey,
         handlePreviewBackground,
         handlePreviewText,
+        handleToggleMilliseconds,
         loading,
         overlayVisible,
         permissionGranted,
@@ -224,6 +246,7 @@ export default function useController(){
         pixPayload: '00020101021126580014br.gov.bcb.pix01363a10aa75-dd23-4fb2-8e70-099fb02fadf35204000053039865802BR5918JONATHAN R FEBRAIO6009TANQUINHO62070503***63040D84',
         pixKey: '3a10aa75-dd23-4fb2-8e70-099fb02fadf3',
         pixOwner: 'JONATHAN RAMOS FEBRAIO',
+        showMilliseconds,
         textHex,
         timerRunning,
     }

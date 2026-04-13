@@ -142,100 +142,6 @@ export const SummaryText = styled.Text.attrs({
     color: ${props => props.theme.timerTextMuted};
 `;
 
-export const Preview = styled.View.attrs({
-})`
-    padding: 20px 18px 18px;
-    border-radius: 24px;
-    background: ${props => props.theme.timerSurface};
-    border-width: 1px;
-    border-color: ${props => props.theme.lightshadow};
-    margin-bottom: 18px;
-`;
-
-export const PreviewHeader = styled.View.attrs({
-})`
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 18px;
-`;
-
-export const PreviewTitle = styled.Text.attrs({
-})`
-    font-family: Bold;
-    font-size: 18px;
-    color: ${props => props.theme.black};
-`;
-
-export const PreviewTag = styled.View.attrs({
-})`
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: ${props => props.active ? props.theme.timerAccent : props.theme.timerSurfaceSoft};
-`;
-
-export const PreviewTagText = styled.Text.attrs({
-})`
-    font-family: Bold;
-    font-size: 12px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: ${props => props.theme.timerFace};
-    
-`;
-
-export const PreviewBubble = styled.View.attrs({
-})`
-    align-items: center;
-    padding: 8px 16px;
-    border-radius: 22px;
-    background: ${props => props.backgroundHex || props.theme.timerFace};
-    margin-bottom: 16px;
-`;
-
-export const PreviewTime = styled.Text.attrs({
-})`
-    font-family: Bold;
-    font-size: 40px;
-    color: ${props => props.textHex || props.theme.timerFaceText};
-    text-align: center;
-`;
-
-export const PreviewHint = styled.Text.attrs({
-})`
-    font-family: Regular;
-    font-size: 14px;
-    line-height: 22px;
-    color: ${props => props.theme.timerTextMuted};
-`;
-
-export const InlineActions = styled.View.attrs({
-})`
-    flex-direction: row;
-    align-items: stretch;
-    justify-content: space-between;
-    margin-top: 16px;
-`;
-
-export const SecondaryAction = styled.TouchableOpacity.attrs({
-    activeOpacity: 0.82,
-})`
-    flex: 1;
-    padding: 16px;
-    border-radius: 16px;
-    background: ${props => props.danger ? props.theme.timerDanger : props.theme.timerSurfaceSoft};
-    align-items: center;
-    justify-content: center;
-    margin-right: ${props => props.first ? '10px' : '0px'};
-`;
-
-export const SecondaryActionText = styled.Text.attrs({
-})`
-    font-family: Bold;
-    font-size: 14px;
-    color: ${props => props.theme.timerFace};
-`;
-
 export const GestureList = styled.View.attrs({
 })`
     padding: 18px;
@@ -304,6 +210,54 @@ export const CustomizeHint = styled.Text.attrs({
     line-height: 22px;
     color: ${props => props.theme.timerTextMuted};
     margin-bottom: 18px;
+`;
+
+export const CustomizeToggle = styled.View.attrs({
+})`
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: ${props => props.theme.timerScreen};
+    border-width: 1px;
+    border-color: ${props => props.active ? props.theme.timerBorder : props.theme.lightshadow};
+    margin-bottom: 18px;
+`;
+
+export const CustomizeToggleRow = styled.View.attrs({
+})`
+    flex-direction: row;
+    align-items: center;
+`;
+
+export const CustomizeToggleMarker = styled.Text.attrs({
+})`
+    font-family: Bold;
+    font-size: 14px;
+    letter-spacing: -0.4px;
+    color: ${props => props.active ? props.theme.timerAccentSoft : props.theme.timerAccent};
+    margin-right: 14px;
+`;
+
+export const CustomizeToggleCopy = styled.View.attrs({
+})`
+    flex: 1;
+    margin-right: 12px;
+`;
+
+export const CustomizeToggleLabel = styled.Text.attrs({
+})`
+    font-family: Medium;
+    font-size: 16px;
+    line-height: 20px;
+    color: ${props => props.theme.timerFace};
+`;
+
+export const CustomizeToggleHint = styled.Text.attrs({
+})`
+    font-family: Regular;
+    font-size: ${props => props.subtle ? '12px' : '12px'};
+    line-height: ${props => props.subtle ? '18px' : '18px'};
+    color: ${props => props.subtle ? props.theme.timerTextMuted : props.active ? props.theme.timerAccentSoft : props.theme.timerTextMuted};
+    margin-top: ${props => props.subtle ? '10px' : '4px'};
 `;
 
 export const DonationCard = styled.View.attrs({

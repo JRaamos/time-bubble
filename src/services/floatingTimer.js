@@ -9,6 +9,7 @@ const fallbackState = {
 const fallbackAppearance = {
     backgroundHex: '#171C27',
     textHex: '#F9FBFF',
+    showMilliseconds: false,
 }
 
 const floatingTimerModule = NativeModules.FloatingTimerModule
@@ -112,6 +113,7 @@ export const getFloatingTimerAppearance = async () => {
     return {
         backgroundHex: appearance?.backgroundHex || fallbackAppearance.backgroundHex,
         textHex: appearance?.textHex || fallbackAppearance.textHex,
+        showMilliseconds: !!appearance?.showMilliseconds,
     }
 }
 
@@ -132,10 +134,26 @@ export const setFloatingTimerAppearance = async (backgroundHex, textHex) => {
     return floatingTimerModule.setFloatingTimerAppearance(backgroundHex, textHex)
 }
 
+export const setFloatingTimerShowMilliseconds = async showMilliseconds => {
+    if (Platform.OS !== 'android' || !floatingTimerModule?.setFloatingTimerShowMilliseconds) {
+        debugLog('setFloatingTimerShowMilliseconds:unavailable', {
+            platform: Platform.OS,
+            hasModule: !!floatingTimerModule,
+        })
+        return
+    }
+
+    debugLog('setFloatingTimerShowMilliseconds:start', {
+        showMilliseconds,
+    })
+
+    return floatingTimerModule.setFloatingTimerShowMilliseconds(!!showMilliseconds)
+}
+
 export const subscribeFloatingTimerState = listener => {
     if (!floatingTimerEmitter) {
         return {
-            remove: () => {},
+            remove: () => { },
         }
     }
 

@@ -11,6 +11,7 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.UiThreadUtil
 
 class FloatingTimerModule(
     reactContext: ReactApplicationContext,
@@ -110,6 +111,7 @@ class FloatingTimerModule(
         val map = Arguments.createMap().apply {
             putString("backgroundHex", FloatingTimerAppearanceStore.getBackgroundHex(reactApplicationContext))
             putString("textHex", FloatingTimerAppearanceStore.getTextHex(reactApplicationContext))
+            putBoolean("showMilliseconds", FloatingTimerAppearanceStore.getShowMilliseconds(reactApplicationContext))
         }
         promise.resolve(map)
     }
@@ -122,11 +124,44 @@ class FloatingTimerModule(
                 backgroundHex,
                 textHex,
             )
-            FloatingTimerService.refreshAppearance()
-            promise.resolve(true)
+
+            UiThreadUtil.runOnUiThread {
+                try {
+                    FloatingTimerService.refreshOverlay()
+                    promise.resolve(true)
+                } catch (error: Exception) {
+                    Log.e(TAG, "setFloatingTimerAppearance:ui-error", error)
+                    promise.reject("set_floating_timer_appearance_failed", error)
+                }
+            }
         } catch (error: Exception) {
             Log.e(TAG, "setFloatingTimerAppearance:error", error)
             promise.reject("set_floating_timer_appearance_failed", error)
+        }
+    }
+
+    @ReactMethod
+    fun setFloatingTimerShowMilliseconds(showMilliseconds: Boolean, promise: Promise) {
+        try {
+            FloatingTimerAppearanceStore.save(
+                reactApplicationContext,
+                FloatingTimerAppearanceStore.getBackgroundHex(reactApplicationContext),
+                FloatingTimerAppearanceStore.getTextHex(reactApplicationContext),
+                showMilliseconds,
+            )
+
+            UiThreadUtil.runOnUiThread {
+                try {
+                    FloatingTimerService.refreshOverlay(showMilliseconds)
+                    promise.resolve(true)
+                } catch (error: Exception) {
+                    Log.e(TAG, "setFloatingTimerShowMilliseconds:ui-error", error)
+                    promise.reject("set_floating_timer_show_milliseconds_failed", error)
+                }
+            }
+        } catch (error: Exception) {
+            Log.e(TAG, "setFloatingTimerShowMilliseconds:error", error)
+            promise.reject("set_floating_timer_show_milliseconds_failed", error)
         }
     }
 

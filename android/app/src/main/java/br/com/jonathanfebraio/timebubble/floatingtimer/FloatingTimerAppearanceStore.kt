@@ -7,9 +7,11 @@ object FloatingTimerAppearanceStore {
     private const val PREFERENCES_NAME = "floating_timer_preferences"
     private const val BACKGROUND_HEX_KEY = "background_hex"
     private const val TEXT_HEX_KEY = "text_hex"
+    private const val SHOW_MILLISECONDS_KEY = "show_milliseconds"
 
     const val DEFAULT_BACKGROUND_HEX = "#171C27"
     const val DEFAULT_TEXT_HEX = "#F9FBFF"
+    const val DEFAULT_SHOW_MILLISECONDS = false
 
     fun getBackgroundHex(context: Context): String {
         return context
@@ -28,12 +30,23 @@ object FloatingTimerAppearanceStore {
     }
 
     fun save(context: Context, backgroundHex: String, textHex: String) {
+        save(context, backgroundHex, textHex, getShowMilliseconds(context))
+    }
+
+    fun getShowMilliseconds(context: Context): Boolean {
+        return context
+            .getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+            .getBoolean(SHOW_MILLISECONDS_KEY, DEFAULT_SHOW_MILLISECONDS)
+    }
+
+    fun save(context: Context, backgroundHex: String, textHex: String, showMilliseconds: Boolean) {
         context
             .getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
             .edit()
             .putString(BACKGROUND_HEX_KEY, normalizeBackgroundHex(backgroundHex))
             .putString(TEXT_HEX_KEY, normalizeTextHex(textHex))
-            .apply()
+            .putBoolean(SHOW_MILLISECONDS_KEY, showMilliseconds)
+            .commit()
     }
 
     fun resolveBackgroundColor(context: Context): Int {
