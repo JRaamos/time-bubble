@@ -188,12 +188,12 @@ export const GestureText = styled.Text.attrs({
 
 export const CustomizeCard = styled.View.attrs({
 })`
-    padding: 20px 18px 18px;
-    border-radius: 24px;
-    background: ${props => props.theme.timerSurface};
-    border-width: 1px;
-    border-color: ${props => props.theme.lightshadow};
+    padding: 18px;
     margin-bottom: 18px;
+    background: ${props => props.theme.timerSurface};
+    border-radius: 20px;
+    border-color: ${props => props.theme.lightshadow};
+    border-width: 1px;
 `;
 
 export const CustomizeTitle = styled.Text.attrs({
@@ -207,15 +207,22 @@ export const CustomizeTitle = styled.Text.attrs({
 export const CustomizeHint = styled.Text.attrs({
 })`
     font-family: Regular;
-    font-size: 14px;
-    line-height: 22px;
+    font-size: 13px;
+    line-height: 20px;
     color: ${props => props.theme.timerTextMuted};
-    margin-bottom: 18px;
+    margin-bottom: 10px;
+`;
+
+export const CustomizeDivider = styled.View.attrs({
+})`
+    height: 1px;
+    background: ${props => props.theme.lightshadow};
+    margin: 4px 0px 8px;
 `;
 
 export const CustomizeItemStack = styled.View.attrs({
 })`
-    margin-bottom: 12px;
+    margin-bottom: 18px;
 `;
 
 export const CustomizeItemRow = styled.View.attrs({
@@ -257,38 +264,37 @@ export const CustomizeItemDescription = styled.Text.attrs({
 export const CustomizeOptionLabel = styled.Text.attrs({
 })`
     font-family: SemiBold;
-    font-size: 12px;
-    line-height: 16px;
-    letter-spacing: 1px;
+    font-size: 11px;
+    line-height: 14px;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
     color: ${props => props.theme.timerAccentSoft};
-    margin-top: 10px;
+    margin-top: 12px;
     margin-left: 30px;
 `;
 
 export const CustomizeToggle = styled.View.attrs({
 })`
-    padding: 14px 16px;
-    border-radius: 18px;
-    background: ${props => props.theme.timerScreen};
-    border-width: 1px;
-    border-color: ${props => props.active ? props.theme.timerBorder : props.theme.lightshadow};
-    margin-bottom: 18px;
+    padding: 16px 0px;
+    border-bottom-width: 1px;
+    border-bottom-color: ${props => props.theme.lightshadow};
 `;
 
 export const CustomizeToggleRow = styled.View.attrs({
 })`
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
 `;
 
 export const CustomizeToggleMarker = styled.Text.attrs({
 })`
     font-family: Bold;
-    font-size: 14px;
-    letter-spacing: -0.4px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     color: ${props => props.active ? props.theme.timerAccentSoft : props.theme.timerAccent};
-    margin-right: 14px;
+    margin-right: 10px;
+    min-width: 34px;
 `;
 
 export const CustomizeToggleCopy = styled.View.attrs({
@@ -299,7 +305,7 @@ export const CustomizeToggleCopy = styled.View.attrs({
 
 export const CustomizeToggleLabel = styled.Text.attrs({
 })`
-    font-family: Medium;
+    font-family: SemiBold;
     font-size: 16px;
     line-height: 20px;
     color: ${props => props.theme.timerFace};
@@ -311,7 +317,7 @@ export const CustomizeToggleHint = styled.Text.attrs({
     font-size: ${props => props.subtle ? '12px' : '12px'};
     line-height: ${props => props.subtle ? '18px' : '18px'};
     color: ${props => props.subtle ? props.theme.timerTextMuted : props.active ? props.theme.timerAccentSoft : props.theme.timerTextMuted};
-    margin-top: ${props => props.subtle ? '10px' : '4px'};
+    margin-top: ${props => props.subtle ? '6px' : '4px'};
 `;
 
 export const CustomizeFontsScroll = styled.ScrollView.attrs({
@@ -320,27 +326,33 @@ export const CustomizeFontsScroll = styled.ScrollView.attrs({
     contentContainerStyle: {
         alignItems: 'stretch',
         paddingHorizontal: 2,
-        paddingRight: 14,
+        paddingRight: 10,
     },
 })`
-    margin-top: 14px;
+    margin-top: 10px;
 `;
 
 export const CustomizeOptionPreview = styled.TouchableOpacity.attrs(props => ({
     activeOpacity: props.disabled ? 1 : 0.82,
     disabled: props.disabled,
 }))`
-    width: 158px;
-    min-height: 124px;
-    padding: 14px 16px;
-    border-radius: 18px;
-    background: ${props => props.active ? props.theme.timerAccent : props.theme.timerScreen};
-    border-width: ${props => props.active ? '2px' : '1px'};
-    border-color: ${props => props.active ? props.theme.timerAccentSoft : props.theme.lightshadow};
+    width: 138px;
+    min-height: 110px;
+    padding: 12px 12px 14px;
+    border-radius: 16px;
+    background: ${props => props.theme.timerSurface};
+    border-width: ${props => props.active ? '1.5px' : '1px'};
+    border-color: ${props => props.active ? props.theme.timerBorder : props.theme.lightshadow};
     margin-right: 12px;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-end;
     opacity: ${props => props.disabled ? 0.6 : 1};
+`;
+
+export const CustomizeOptionPreviewSample = styled.View.attrs({
+})`
+    flex: 1;
+    align-items: center;
+    justify-content: center;
 `;
 
 export const CustomizeOptionPreviewValue = styled.Text.attrs({
@@ -349,18 +361,18 @@ export const CustomizeOptionPreviewValue = styled.Text.attrs({
     font-size: 18px;
     line-height: 22px;
     letter-spacing: ${props => `${props.letterSpacing || 0}px`};
-    color: ${props => props.active ? props.theme.timerScreen : props.theme.timerFace};
+    color: ${props => props.active ? props.theme.timerAccentSoft : props.theme.timerFace};
     text-align: center;
-    margin-bottom: 14px;
 `;
 
 export const CustomizeOptionPreviewLabel = styled.Text.attrs({
 })`
-    font-family: ${props => props.active ? 'Bold' : 'Regular'};
+    font-family: ${props => props.active ? 'Bold' : 'Medium'};
     font-size: 12px;
     line-height: 16px;
-    color: ${props => props.active ? props.theme.timerScreen : props.theme.timerTextMuted};
+    color: ${props => props.active ? props.theme.timerFace : props.theme.timerTextMuted};
     text-align: center;
+    margin-top: 8px;
 `;
 
 export const DonationCard = styled.View.attrs({

@@ -10,6 +10,7 @@ import {
     BrandBubble,
     BrandCopy,
     CustomizeCard,
+    CustomizeDivider,
     CustomizeHint,
     CustomizeFontsScroll,
     CustomizeItemDescription,
@@ -21,11 +22,13 @@ import {
     CustomizeOptionLabel,
     CustomizeOptionPreview,
     CustomizeOptionPreviewLabel,
+    CustomizeOptionPreviewSample,
     CustomizeOptionPreviewValue,
     CustomizeToggle,
     CustomizeToggleCopy,
     CustomizeToggleHint,
     CustomizeToggleLabel,
+    CustomizeToggleMarker,
     CustomizeToggleRow,
     CustomizeTitle,
     DonationButton,
@@ -141,87 +144,81 @@ export default function Home() {
                 <CustomizeCard>
                     <CustomizeTitle>Visual do floating</CustomizeTitle>
                     <CustomizeHint>
-                        As escolhas ficam salvas no aparelho e atualizam o floating em tempo real quando ele ja estiver aberto.
+                        Ajuste comportamento, fonte e cor. Tudo aplica no floating em tempo real.
                     </CustomizeHint>
+                    <CustomizeDivider />
 
                     <CustomizeToggle active={showMilliseconds}>
                         <CustomizeToggleRow>
                             <CustomizeToggleCopy>
                                 <CustomizeToggleLabel>Mostrar Milissegundos</CustomizeToggleLabel>
+                                <CustomizeToggleHint subtle>
+                                    Ative so quando quiser uma leitura mais precisa.
+                                </CustomizeToggleHint>
                             </CustomizeToggleCopy>
                             <Toggle disabled={busy} onChange={handleToggleMilliseconds} timer value={showMilliseconds} />
                         </CustomizeToggleRow>
-                        <CustomizeToggleHint subtle>
-                            Desligado por padrao em mm:ss. Ative apenas quando quiser mais precisao na leitura.
-                        </CustomizeToggleHint>
                     </CustomizeToggle>
 
                     <CustomizeToggle active={openOnAppLaunch}>
                         <CustomizeToggleRow>
                             <CustomizeToggleCopy>
                                 <CustomizeToggleLabel>Abrir floating ao entrar</CustomizeToggleLabel>
+                                <CustomizeToggleHint subtle>
+                                    Com permissao liberada, o app abre direto no floating.
+                                </CustomizeToggleHint>
                             </CustomizeToggleCopy>
                             <Toggle disabled={busy} onChange={handleToggleOpenOnLaunch} timer value={openOnAppLaunch} />
                         </CustomizeToggleRow>
-                        <CustomizeToggleHint subtle>
-                            Quando estiver ativo, abrir o app com permissao liberada ja mostra o floating automaticamente.
-                        </CustomizeToggleHint>
                     </CustomizeToggle>
 
                     <CustomizeItemStack>
-                        <CustomizeItemRow>
-                            <CustomizeItemIcon icon="clock" width={18} height={18} />
-                            <CustomizeItemLabelGroup>
-                                <CustomizeItemLabel>Fonte dos numeros</CustomizeItemLabel>
-                                <CustomizeItemDescription>Escolha uma fonte para os numeros do floating e veja a amostra antes de aplicar.</CustomizeItemDescription>
-                            </CustomizeItemLabelGroup>
-                        </CustomizeItemRow>
+                        <CustomizeToggle>
 
-                        <CustomizeFontsScroll>
-                            {fontOptions.map(item => (
-                                <CustomizeOptionPreview
-                                    active={fontKey === item.key}
-                                    disabled={busy}
-                                    key={item.key}
-                                    onPress={() => handleSelectFont(item.key)}
-                                >
-                                    <CustomizeOptionPreviewValue active={fontKey === item.key} fontFamily={item.previewFont} letterSpacing={item.previewSpacing}>{item.previewValue}</CustomizeOptionPreviewValue>
-                                    <CustomizeOptionPreviewLabel active={fontKey === item.key}>{item.label}</CustomizeOptionPreviewLabel>
-                                </CustomizeOptionPreview>
-                            ))}
-                        </CustomizeFontsScroll>
+                            <CustomizeItemRow>
+                                <CustomizeItemLabelGroup>
+                                    <CustomizeItemLabel>Fonte dos numeros</CustomizeItemLabel>
+                                    <CustomizeItemDescription>Role lateralmente e toque para aplicar.</CustomizeItemDescription>
+                                </CustomizeItemLabelGroup>
+                            </CustomizeItemRow>
+
+                            <CustomizeFontsScroll>
+                                {fontOptions.map(item => (
+                                    <CustomizeOptionPreview
+                                        active={fontKey === item.key}
+                                        disabled={busy}
+                                        key={item.key}
+                                        onPress={() => handleSelectFont(item.key)}
+                                    >
+                                        <CustomizeOptionPreviewSample>
+                                            <CustomizeOptionPreviewValue active={fontKey === item.key} fontFamily={item.previewFont} letterSpacing={item.previewSpacing}>{item.previewValue}</CustomizeOptionPreviewValue>
+                                        </CustomizeOptionPreviewSample>
+                                        <CustomizeOptionPreviewLabel active={fontKey === item.key}>{item.label}</CustomizeOptionPreviewLabel>
+                                    </CustomizeOptionPreview>
+                                ))}
+                            </CustomizeFontsScroll>
+                        </CustomizeToggle>
                     </CustomizeItemStack>
 
                     <CustomizeItemStack>
                         <CustomizeItemRow>
-                            <CustomizeItemIcon icon="edit" width={18} height={18} />
                             <CustomizeItemLabelGroup>
                                 <CustomizeItemLabel>Cor do floating</CustomizeItemLabel>
                                 <CustomizeItemDescription>Escolha a cor do fundo do cronometro flutuante.</CustomizeItemDescription>
                             </CustomizeItemLabelGroup>
                         </CustomizeItemRow>
-
-                        <CustomizeOptionLabel>Fundo</CustomizeOptionLabel>
                     </CustomizeItemStack>
 
-                    <ColorPicker
-                        hint="Defina a cor real do card flutuante com toque e arraste."
-                        label="Cor do floating"
-                        onChange={handlePreviewBackground}
-                        onComplete={handleCommitBackground}
-                        value={backgroundHex}
-                    />
+                    <ColorPicker onChange={handlePreviewBackground} onComplete={handleCommitBackground} value={backgroundHex} />
 
                     <CustomizeItemStack>
                         <CustomizeItemRow>
-                            <CustomizeItemIcon icon="edit" width={18} height={18} />
                             <CustomizeItemLabelGroup>
                                 <CustomizeItemLabel>Cor do texto</CustomizeItemLabel>
                                 <CustomizeItemDescription>Escolha a cor dos numeros para manter contraste e leitura.</CustomizeItemDescription>
                             </CustomizeItemLabelGroup>
                         </CustomizeItemRow>
 
-                        <CustomizeOptionLabel>Texto</CustomizeOptionLabel>
                     </CustomizeItemStack>
 
                     <ColorPicker
@@ -280,6 +277,6 @@ export default function Home() {
                 </DonationCard>
 
             </Screen>
-        </ContainerAuthenticated>
+        </ContainerAuthenticated >
     )
 }
