@@ -149,6 +149,7 @@ export const GestureList = styled.View.attrs({
     background: ${props => props.theme.timerSurface};
     border-width: 1px;
     border-color: ${props => props.theme.lightshadow};
+    margin-bottom: 20px;
 `;
 
 export const GestureTitle = styled.Text.attrs({

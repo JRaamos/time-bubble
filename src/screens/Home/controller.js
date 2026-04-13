@@ -11,6 +11,7 @@ import {
     openOverlayPermissionSettings,
     setFloatingTimerAppearance,
     setFloatingTimerFontKey,
+    setFloatingTimerOpenOnAppLaunch,
     setFloatingTimerShowMilliseconds,
     showFloatingTimer,
     subscribeFloatingTimerState,
@@ -110,6 +111,7 @@ export const TIMER_FONT_OPTIONS = [
 
 export default function useController(){
     const appState = useRef(AppState.currentState)
+    const autoOpenRequestedRef = useRef(false)
     const backgroundHexRef = useRef('#171C27')
     const textHexRef = useRef('#F9FBFF')
     const pixCopiedTimeout = useRef(null)
@@ -122,6 +124,7 @@ export default function useController(){
     const [elapsedMs, setElapsedMs] = useState(0)
     const [backgroundHex, setBackgroundHex] = useState('#171C27')
     const [fontKey, setFontKey] = useState('ds-digib')
+    const [openOnAppLaunch, setOpenOnAppLaunch] = useState(false)
     const [textHex, setTextHex] = useState('#F9FBFF')
     const [showMilliseconds, setShowMilliseconds] = useState(false)
     const [pixCopied, setPixCopied] = useState(false)
@@ -158,6 +161,7 @@ export default function useController(){
         setElapsedMs(typeof state?.elapsedMs === 'number' ? state.elapsedMs : 0)
         setBackgroundHex(appearance?.backgroundHex || '#171C27')
         setFontKey(appearance?.fontKey || 'ds-digib')
+        setOpenOnAppLaunch(!!appearance?.openOnAppLaunch)
         setTextHex(appearance?.textHex || '#F9FBFF')
         setShowMilliseconds(!!appearance?.showMilliseconds)
         setLoading(false)
@@ -176,6 +180,7 @@ export default function useController(){
 
         const appStateSubscription = AppState.addEventListener('change', nextAppState => {
             if ((appState.current === 'background' || appState.current === 'inactive') && nextAppState === 'active') {
+                autoOpenRequestedRef.current = false
                 syncState()
             }
 
@@ -189,6 +194,27 @@ export default function useController(){
             appStateSubscription.remove()
         }
     }, [syncState])
+
+    useEffect(() => {
+        if (Platform.OS !== 'android' || !permissionGranted || !openOnAppLaunch) {
+            autoOpenRequestedRef.current = false
+            return
+        }
+
+        if (overlayVisible || autoOpenRequestedRef.current) {
+            return
+        }
+
+        autoOpenRequestedRef.current = true
+
+        showFloatingTimer()
+            .catch(error => {
+                debugError('autoOpenFloating:error', error)
+            })
+            .finally(() => {
+                syncState()
+            })
+    }, [openOnAppLaunch, overlayVisible, permissionGranted, syncState])
 
     const handlePrimaryAction = async () => {
         if (Platform.OS !== 'android') {
@@ -295,6 +321,20 @@ export default function useController(){
         syncState()
     }
 
+    const handleToggleOpenOnLaunch = async value => {
+        setOpenOnAppLaunch(!!value)
+
+        try {
+            await setFloatingTimerOpenOnAppLaunch(!!value)
+        } catch (error) {
+            debugError('handleToggleOpenOnLaunch:error', error)
+            syncState()
+            return
+        }
+
+        syncState()
+    }
+
     const handleCopyPixKey = async () => {
         try {
             await Clipboard.setStringAsync('3a10aa75-dd23-4fb2-8e70-099fb02fadf3')
@@ -327,8 +367,10 @@ export default function useController(){
         handlePreviewBackground,
         handlePreviewText,
         handleSelectFont,
+        handleToggleOpenOnLaunch,
         handleToggleMilliseconds,
         loading,
+        openOnAppLaunch,
         overlayVisible,
         permissionGranted,
         platformIsAndroid: Platform.OS === 'android',

@@ -8,11 +8,13 @@ object FloatingTimerAppearanceStore {
     private const val BACKGROUND_HEX_KEY = "background_hex"
     private const val TEXT_HEX_KEY = "text_hex"
     private const val SHOW_MILLISECONDS_KEY = "show_milliseconds"
+    private const val OPEN_ON_APP_LAUNCH_KEY = "open_on_app_launch"
     private const val FONT_KEY = "font_key"
 
     const val DEFAULT_BACKGROUND_HEX = "#171C27"
     const val DEFAULT_TEXT_HEX = "#F9FBFF"
     const val DEFAULT_SHOW_MILLISECONDS = false
+    const val DEFAULT_OPEN_ON_APP_LAUNCH = false
     const val DEFAULT_FONT_KEY = "ds-digib"
 
     fun getBackgroundHex(context: Context): String {
@@ -32,7 +34,14 @@ object FloatingTimerAppearanceStore {
     }
 
     fun save(context: Context, backgroundHex: String, textHex: String) {
-        save(context, backgroundHex, textHex, getShowMilliseconds(context), getFontKey(context))
+        save(
+            context,
+            backgroundHex,
+            textHex,
+            getShowMilliseconds(context),
+            getOpenOnAppLaunch(context),
+            getFontKey(context),
+        )
     }
 
     fun getShowMilliseconds(context: Context): Boolean {
@@ -49,17 +58,38 @@ object FloatingTimerAppearanceStore {
             ?: DEFAULT_FONT_KEY
     }
 
-    fun save(context: Context, backgroundHex: String, textHex: String, showMilliseconds: Boolean) {
-        save(context, backgroundHex, textHex, showMilliseconds, getFontKey(context))
+    fun getOpenOnAppLaunch(context: Context): Boolean {
+        return context
+            .getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+            .getBoolean(OPEN_ON_APP_LAUNCH_KEY, DEFAULT_OPEN_ON_APP_LAUNCH)
     }
 
-    fun save(context: Context, backgroundHex: String, textHex: String, showMilliseconds: Boolean, fontKey: String) {
+    fun save(context: Context, backgroundHex: String, textHex: String, showMilliseconds: Boolean) {
+        save(
+            context,
+            backgroundHex,
+            textHex,
+            showMilliseconds,
+            getOpenOnAppLaunch(context),
+            getFontKey(context),
+        )
+    }
+
+    fun save(
+        context: Context,
+        backgroundHex: String,
+        textHex: String,
+        showMilliseconds: Boolean,
+        openOnAppLaunch: Boolean,
+        fontKey: String,
+    ) {
         context
             .getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
             .edit()
             .putString(BACKGROUND_HEX_KEY, normalizeBackgroundHex(backgroundHex))
             .putString(TEXT_HEX_KEY, normalizeTextHex(textHex))
             .putBoolean(SHOW_MILLISECONDS_KEY, showMilliseconds)
+            .putBoolean(OPEN_ON_APP_LAUNCH_KEY, openOnAppLaunch)
             .putString(FONT_KEY, normalizeFontKey(fontKey))
             .commit()
     }

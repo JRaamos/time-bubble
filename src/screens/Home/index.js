@@ -74,7 +74,9 @@ export default function Home() {
         handlePreviewBackground,
         handlePreviewText,
         handleSelectFont,
+        handleToggleOpenOnLaunch,
         handleToggleMilliseconds,
+        openOnAppLaunch,
         overlayVisible,
         permissionGranted,
         platformIsAndroid,
@@ -136,23 +138,6 @@ export default function Home() {
                         <GestureText>Quando o botao aparecer, tocar no cronometro fora dele apenas esconde o fechamento.</GestureText>
                     </GestureRow>
                 </GestureList>
-                <SummaryGrid>
-                    <SummaryCard active={permissionGranted}>
-                        <SummaryLabel>Permissao</SummaryLabel>
-                        <SummaryValue>{permissionGranted ? 'Liberada' : 'Pendente'}</SummaryValue>
-                        <SummaryText>
-                            {permissionGranted ? 'O Android ja autorizou a sobreposicao e o card pode ser aberto acima de outros apps.' : 'Ao tocar no botao, o app abre a configuracao do Android para liberar a sobreposicao.'}
-                        </SummaryText>
-                    </SummaryCard>
-                    <SummaryCard active={overlayVisible}>
-                        <SummaryLabel>Overlay</SummaryLabel>
-                        <SummaryValue>{overlayVisible ? 'Ativo agora' : 'Fechado'}</SummaryValue>
-                        <SummaryText>
-                            {overlayVisible ? 'O service nativo esta vivo e o card continua contando mesmo com o app em segundo plano.' : 'Quando aberto, o cronometro fica em foreground service para reduzir interrupcoes do sistema.'}
-                        </SummaryText>
-                    </SummaryCard>
-                </SummaryGrid>
-
                 <CustomizeCard>
                     <CustomizeTitle>Visual do floating</CustomizeTitle>
                     <CustomizeHint>
@@ -168,6 +153,18 @@ export default function Home() {
                         </CustomizeToggleRow>
                         <CustomizeToggleHint subtle>
                             Desligado por padrao em mm:ss. Ative apenas quando quiser mais precisao na leitura.
+                        </CustomizeToggleHint>
+                    </CustomizeToggle>
+
+                    <CustomizeToggle active={openOnAppLaunch}>
+                        <CustomizeToggleRow>
+                            <CustomizeToggleCopy>
+                                <CustomizeToggleLabel>Abrir floating ao entrar</CustomizeToggleLabel>
+                            </CustomizeToggleCopy>
+                            <Toggle disabled={busy} onChange={handleToggleOpenOnLaunch} timer value={openOnAppLaunch} />
+                        </CustomizeToggleRow>
+                        <CustomizeToggleHint subtle>
+                            Quando estiver ativo, abrir o app com permissao liberada ja mostra o floating automaticamente.
                         </CustomizeToggleHint>
                     </CustomizeToggle>
 
@@ -236,6 +233,24 @@ export default function Home() {
                         value={textHex}
                     />
                 </CustomizeCard>
+                <SummaryGrid>
+                    <SummaryCard active={permissionGranted}>
+                        <SummaryLabel>Permissao</SummaryLabel>
+                        <SummaryValue>{permissionGranted ? 'Liberada' : 'Pendente'}</SummaryValue>
+                        <SummaryText>
+                            {permissionGranted ? 'O Android ja autorizou a sobreposicao e o card pode ser aberto acima de outros apps.' : 'Ao tocar no botao, o app abre a configuracao do Android para liberar a sobreposicao.'}
+                        </SummaryText>
+                    </SummaryCard>
+                    <SummaryCard active={overlayVisible}>
+                        <SummaryLabel>Overlay</SummaryLabel>
+                        <SummaryValue>{overlayVisible ? 'Ativo agora' : 'Fechado'}</SummaryValue>
+                        <SummaryText>
+                            {overlayVisible ? 'O service nativo esta vivo e o card continua contando mesmo com o app em segundo plano.' : 'Quando aberto, o cronometro fica em foreground service para reduzir interrupcoes do sistema.'}
+                        </SummaryText>
+                    </SummaryCard>
+                </SummaryGrid>
+
+
 
                 <DonationCard>
                     <DonationEyebrow>Apoie o desenvolvimento</DonationEyebrow>

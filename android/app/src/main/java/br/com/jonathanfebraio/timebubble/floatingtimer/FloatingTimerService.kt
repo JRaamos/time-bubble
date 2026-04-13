@@ -112,6 +112,15 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
         hideOverlay()
     }
 
+    override fun onSettingsRequested() {
+        val launchIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(MainActivity.EXTRA_OPEN_SETTINGS, true)
+        }
+
+        startActivity(launchIntent)
+    }
+
     private fun showOverlay() {
         startForeground(NOTIFICATION_ID, buildNotification())
         overlayManager?.show()
@@ -142,6 +151,7 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
     private fun buildNotification(): Notification {
         val launchIntent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(MainActivity.EXTRA_OPEN_SETTINGS, true)
         }
 
         val contentPendingIntent = PendingIntent.getActivity(

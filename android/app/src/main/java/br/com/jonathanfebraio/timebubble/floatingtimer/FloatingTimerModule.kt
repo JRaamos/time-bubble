@@ -112,6 +112,7 @@ class FloatingTimerModule(
             putString("backgroundHex", FloatingTimerAppearanceStore.getBackgroundHex(reactApplicationContext))
             putString("textHex", FloatingTimerAppearanceStore.getTextHex(reactApplicationContext))
             putBoolean("showMilliseconds", FloatingTimerAppearanceStore.getShowMilliseconds(reactApplicationContext))
+            putBoolean("openOnAppLaunch", FloatingTimerAppearanceStore.getOpenOnAppLaunch(reactApplicationContext))
             putString("fontKey", FloatingTimerAppearanceStore.getFontKey(reactApplicationContext))
         }
         promise.resolve(map)
@@ -125,6 +126,7 @@ class FloatingTimerModule(
                 backgroundHex,
                 textHex,
                 FloatingTimerAppearanceStore.getShowMilliseconds(reactApplicationContext),
+                FloatingTimerAppearanceStore.getOpenOnAppLaunch(reactApplicationContext),
                 FloatingTimerAppearanceStore.getFontKey(reactApplicationContext),
             )
 
@@ -151,6 +153,7 @@ class FloatingTimerModule(
                 FloatingTimerAppearanceStore.getBackgroundHex(reactApplicationContext),
                 FloatingTimerAppearanceStore.getTextHex(reactApplicationContext),
                 showMilliseconds,
+                FloatingTimerAppearanceStore.getOpenOnAppLaunch(reactApplicationContext),
                 FloatingTimerAppearanceStore.getFontKey(reactApplicationContext),
             )
 
@@ -177,6 +180,7 @@ class FloatingTimerModule(
                 FloatingTimerAppearanceStore.getBackgroundHex(reactApplicationContext),
                 FloatingTimerAppearanceStore.getTextHex(reactApplicationContext),
                 FloatingTimerAppearanceStore.getShowMilliseconds(reactApplicationContext),
+                FloatingTimerAppearanceStore.getOpenOnAppLaunch(reactApplicationContext),
                 fontKey,
             )
 
@@ -192,6 +196,24 @@ class FloatingTimerModule(
         } catch (error: Exception) {
             Log.e(TAG, "setFloatingTimerFontKey:error", error)
             promise.reject("set_floating_timer_font_key_failed", error)
+        }
+    }
+
+    @ReactMethod
+    fun setFloatingTimerOpenOnAppLaunch(openOnAppLaunch: Boolean, promise: Promise) {
+        try {
+            FloatingTimerAppearanceStore.save(
+                reactApplicationContext,
+                FloatingTimerAppearanceStore.getBackgroundHex(reactApplicationContext),
+                FloatingTimerAppearanceStore.getTextHex(reactApplicationContext),
+                FloatingTimerAppearanceStore.getShowMilliseconds(reactApplicationContext),
+                openOnAppLaunch,
+                FloatingTimerAppearanceStore.getFontKey(reactApplicationContext),
+            )
+            promise.resolve(true)
+        } catch (error: Exception) {
+            Log.e(TAG, "setFloatingTimerOpenOnAppLaunch:error", error)
+            promise.reject("set_floating_timer_open_on_app_launch_failed", error)
         }
     }
 

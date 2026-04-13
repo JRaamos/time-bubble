@@ -20,6 +20,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import br.com.jonathanfebraio.timebubble.R
 import kotlin.math.abs
+import kotlin.math.roundToLong
 
 class FloatingTimerOverlayManager(
     private val context: Context,
@@ -31,17 +32,21 @@ class FloatingTimerOverlayManager(
         fun onPositionChanged(x: Int, y: Int)
         fun onScaleChanged(scale: Float)
         fun onCloseRequested()
+        fun onSettingsRequested()
     }
 
     private val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     private val touchSlop = dpToPx(8)
-    private val closeRevealLongPressTimeoutMs = ViewConfiguration.getLongPressTimeout().toLong() + 450L
+    private val closeRevealLongPressTimeoutMs =
+        ((ViewConfiguration.getLongPressTimeout().toLong() + 450L) * CLOSE_REVEAL_TIMEOUT_FACTOR).roundToLong()
 
     private var rootView: LinearLayout? = null
     private var cardView: FrameLayout? = null
     private var cardBackground: GradientDrawable? = null
     private var timerTextView: TextView? = null
+    private var actionsRowView: LinearLayout? = null
     private var closeButtonView: TextView? = null
+    private var settingsButtonView: TextView? = null
 
     fun show() {
         if (rootView != null) {
@@ -89,6 +94,26 @@ class FloatingTimerOverlayManager(
             text = formatElapsed(FloatingTimerStateStore.getElapsedMs())
         }
 
+        val actionsRow = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.END
+            visibility = View.GONE
+        }
+
+        val settingsView = TextView(context).apply {
+            text = context.getString(R.string.floating_timer_settings_button)
+            setTextColor(Color.WHITE)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            typeface = Typeface.DEFAULT_BOLD
+            gravity = Gravity.CENTER
+            this.background = GradientDrawable().apply {
+                cornerRadius = dpToPx(18).toFloat()
+                setColor(ContextCompat.getColor(context, R.color.floating_timer_border))
+            }
+            setPadding(dpToPx(14), dpToPx(8), dpToPx(14), dpToPx(8))
+            setOnClickListener { listener.onSettingsRequested() }
+        }
+
         val closeView = TextView(context).apply {
             text = context.getString(R.string.floating_timer_close_button)
             setTextColor(Color.WHITE)
@@ -99,7 +124,6 @@ class FloatingTimerOverlayManager(
                 cornerRadius = dpToPx(18).toFloat()
                 setColor(ContextCompat.getColor(context, R.color.floating_timer_close_background))
             }
-            visibility = View.GONE
             setPadding(dpToPx(14), dpToPx(8), dpToPx(14), dpToPx(8))
             setOnClickListener { listener.onCloseRequested() }
         }
@@ -121,8 +145,26 @@ class FloatingTimerOverlayManager(
             ),
         )
 
-        root.addView(
+        actionsRow.addView(
+            settingsView,
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            ).apply {
+                marginEnd = dpToPx(8)
+            },
+        )
+
+        actionsRow.addView(
             closeView,
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            ),
+        )
+
+        root.addView(
+            actionsRow,
             LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -137,6 +179,8 @@ class FloatingTimerOverlayManager(
         cardView = card
         cardBackground = background
         timerTextView = timeView
+        actionsRowView = actionsRow
+        settingsButtonView = settingsView
         closeButtonView = closeView
 
         applyScale(FloatingTimerStateStore.overlayScale)
@@ -163,7 +207,9 @@ class FloatingTimerOverlayManager(
         cardView = null
         cardBackground = null
         timerTextView = null
+        actionsRowView = null
         closeButtonView = null
+        settingsButtonView = null
     }
 
     private fun attachTouchHandling(root: LinearLayout, card: FrameLayout, params: WindowManager.LayoutParams) {
@@ -334,15 +380,15 @@ class FloatingTimerOverlayManager(
     }
 
     private fun showCloseButton() {
-        closeButtonView?.visibility = View.VISIBLE
+        actionsRowView?.visibility = View.VISIBLE
     }
 
     private fun hideCloseButton() {
-        closeButtonView?.visibility = View.GONE
+        actionsRowView?.visibility = View.GONE
     }
 
     private fun isCloseVisible(): Boolean {
-        return closeButtonView?.visibility == View.VISIBLE
+        return actionsRowView?.visibility == View.VISIBLE
     }
 
     private fun dpToPx(value: Int): Int {
@@ -393,6 +439,7 @@ class FloatingTimerOverlayManager(
     }
 
     companion object {
+        private const val CLOSE_REVEAL_TIMEOUT_FACTOR = 0.7
         private const val MIN_SCALE = 0.75f
         private const val MAX_SCALE = 1.8f
     }
