@@ -8,6 +8,7 @@ const fallbackState = {
 
 const fallbackAppearance = {
     backgroundHex: '#171C27',
+    fontKey: 'ds-digib',
     textHex: '#F9FBFF',
     showMilliseconds: false,
 }
@@ -112,6 +113,7 @@ export const getFloatingTimerAppearance = async () => {
 
     return {
         backgroundHex: appearance?.backgroundHex || fallbackAppearance.backgroundHex,
+        fontKey: appearance?.fontKey || fallbackAppearance.fontKey,
         textHex: appearance?.textHex || fallbackAppearance.textHex,
         showMilliseconds: !!appearance?.showMilliseconds,
     }
@@ -148,6 +150,22 @@ export const setFloatingTimerShowMilliseconds = async showMilliseconds => {
     })
 
     return floatingTimerModule.setFloatingTimerShowMilliseconds(!!showMilliseconds)
+}
+
+export const setFloatingTimerFontKey = async fontKey => {
+    if (Platform.OS !== 'android' || !floatingTimerModule?.setFloatingTimerFontKey) {
+        debugLog('setFloatingTimerFontKey:unavailable', {
+            platform: Platform.OS,
+            hasModule: !!floatingTimerModule,
+        })
+        return
+    }
+
+    debugLog('setFloatingTimerFontKey:start', {
+        fontKey,
+    })
+
+    return floatingTimerModule.setFloatingTimerFontKey(fontKey)
 }
 
 export const subscribeFloatingTimerState = listener => {

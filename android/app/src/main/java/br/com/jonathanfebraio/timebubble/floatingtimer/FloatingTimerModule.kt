@@ -112,6 +112,7 @@ class FloatingTimerModule(
             putString("backgroundHex", FloatingTimerAppearanceStore.getBackgroundHex(reactApplicationContext))
             putString("textHex", FloatingTimerAppearanceStore.getTextHex(reactApplicationContext))
             putBoolean("showMilliseconds", FloatingTimerAppearanceStore.getShowMilliseconds(reactApplicationContext))
+            putString("fontKey", FloatingTimerAppearanceStore.getFontKey(reactApplicationContext))
         }
         promise.resolve(map)
     }
@@ -123,6 +124,8 @@ class FloatingTimerModule(
                 reactApplicationContext,
                 backgroundHex,
                 textHex,
+                FloatingTimerAppearanceStore.getShowMilliseconds(reactApplicationContext),
+                FloatingTimerAppearanceStore.getFontKey(reactApplicationContext),
             )
 
             UiThreadUtil.runOnUiThread {
@@ -148,6 +151,7 @@ class FloatingTimerModule(
                 FloatingTimerAppearanceStore.getBackgroundHex(reactApplicationContext),
                 FloatingTimerAppearanceStore.getTextHex(reactApplicationContext),
                 showMilliseconds,
+                FloatingTimerAppearanceStore.getFontKey(reactApplicationContext),
             )
 
             UiThreadUtil.runOnUiThread {
@@ -162,6 +166,32 @@ class FloatingTimerModule(
         } catch (error: Exception) {
             Log.e(TAG, "setFloatingTimerShowMilliseconds:error", error)
             promise.reject("set_floating_timer_show_milliseconds_failed", error)
+        }
+    }
+
+    @ReactMethod
+    fun setFloatingTimerFontKey(fontKey: String, promise: Promise) {
+        try {
+            FloatingTimerAppearanceStore.save(
+                reactApplicationContext,
+                FloatingTimerAppearanceStore.getBackgroundHex(reactApplicationContext),
+                FloatingTimerAppearanceStore.getTextHex(reactApplicationContext),
+                FloatingTimerAppearanceStore.getShowMilliseconds(reactApplicationContext),
+                fontKey,
+            )
+
+            UiThreadUtil.runOnUiThread {
+                try {
+                    FloatingTimerService.refreshOverlay()
+                    promise.resolve(true)
+                } catch (error: Exception) {
+                    Log.e(TAG, "setFloatingTimerFontKey:ui-error", error)
+                    promise.reject("set_floating_timer_font_key_failed", error)
+                }
+            }
+        } catch (error: Exception) {
+            Log.e(TAG, "setFloatingTimerFontKey:error", error)
+            promise.reject("set_floating_timer_font_key_failed", error)
         }
     }
 

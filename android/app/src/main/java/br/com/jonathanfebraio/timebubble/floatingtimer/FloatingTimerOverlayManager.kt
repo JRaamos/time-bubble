@@ -84,7 +84,7 @@ class FloatingTimerOverlayManager(
 
         val timeView = TextView(context).apply {
             setTextColor(FloatingTimerAppearanceStore.resolveTextColor(context))
-            typeface = Typeface.MONOSPACE
+            typeface = resolveTimerTypeface()
             gravity = Gravity.CENTER
             text = formatElapsed(FloatingTimerStateStore.getElapsedMs())
         }
@@ -148,6 +148,8 @@ class FloatingTimerOverlayManager(
     fun applyAppearance() {
         cardBackground?.setColor(FloatingTimerAppearanceStore.resolveBackgroundColor(context))
         timerTextView?.setTextColor(FloatingTimerAppearanceStore.resolveTextColor(context))
+        timerTextView?.typeface = resolveTimerTypeface()
+        timerTextView?.letterSpacing = resolveLetterSpacing()
         rootView?.requestLayout()
     }
 
@@ -361,6 +363,33 @@ class FloatingTimerOverlayManager(
 
         val milliseconds = elapsedMs % 1000
         return String.format("%02d:%02d.%03d", minutes, seconds, milliseconds)
+    }
+
+    private fun resolveTimerTypeface(): Typeface {
+        return when (FloatingTimerAppearanceStore.getFontKey(context)) {
+            "ds-digib" -> Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+            "ds-digii" -> Typeface.MONOSPACE
+            "sans-condensed" -> Typeface.create("sans-serif-condensed", Typeface.NORMAL)
+            "sans-medium" -> Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            "serif" -> Typeface.SERIF
+            "ds-digit" -> Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+            "roboto-mono" -> Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
+            "space-mono" -> Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+            "dm-mono" -> Typeface.create("sans-serif-light", Typeface.NORMAL)
+            else -> Typeface.MONOSPACE
+        }
+    }
+
+    private fun resolveLetterSpacing(): Float {
+        return when (FloatingTimerAppearanceStore.getFontKey(context)) {
+            "ds-digii" -> 0.08f
+            "ds-digit" -> 0.12f
+            "sans-condensed" -> -0.03f
+            "roboto-mono" -> 0.02f
+            "space-mono" -> 0.06f
+            "dm-mono" -> -0.01f
+            else -> 0f
+        }
     }
 
     companion object {

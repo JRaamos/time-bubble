@@ -11,11 +11,21 @@ import {
     BrandCopy,
     CustomizeCard,
     CustomizeHint,
+    CustomizeFontsScroll,
+    CustomizeItemDescription,
+    CustomizeItemIcon,
+    CustomizeItemLabel,
+    CustomizeItemLabelGroup,
+    CustomizeItemRow,
+    CustomizeItemStack,
+    CustomizeOptionLabel,
+    CustomizeOptionPreview,
+    CustomizeOptionPreviewLabel,
+    CustomizeOptionPreviewValue,
     CustomizeToggle,
     CustomizeToggleCopy,
     CustomizeToggleHint,
     CustomizeToggleLabel,
-    CustomizeToggleMarker,
     CustomizeToggleRow,
     CustomizeTitle,
     DonationButton,
@@ -55,12 +65,15 @@ export default function Home() {
     const {
         busy,
         backgroundHex,
+        fontKey,
+        fontOptions,
         handleCommitBackground,
         handleCommitText,
         handleCopyPixKey,
         handlePrimaryAction,
         handlePreviewBackground,
         handlePreviewText,
+        handleSelectFont,
         handleToggleMilliseconds,
         overlayVisible,
         permissionGranted,
@@ -143,17 +156,13 @@ export default function Home() {
                 <CustomizeCard>
                     <CustomizeTitle>Visual do floating</CustomizeTitle>
                     <CustomizeHint>
-                        A escolha acontece na tela React Native, mas as cores sao salvas no aparelho e aplicadas no overlay nativo.
+                        As escolhas ficam salvas no aparelho e atualizam o floating em tempo real quando ele ja estiver aberto.
                     </CustomizeHint>
 
                     <CustomizeToggle active={showMilliseconds}>
                         <CustomizeToggleRow>
-                            <CustomizeToggleMarker active={showMilliseconds}>000</CustomizeToggleMarker>
                             <CustomizeToggleCopy>
                                 <CustomizeToggleLabel>Mostrar Milissegundos</CustomizeToggleLabel>
-                                <CustomizeToggleHint active={showMilliseconds}>
-                                    Quando o floating estiver aberto, a mudanca acontece na hora no cronometro.
-                                </CustomizeToggleHint>
                             </CustomizeToggleCopy>
                             <Toggle disabled={busy} onChange={handleToggleMilliseconds} timer value={showMilliseconds} />
                         </CustomizeToggleRow>
@@ -162,6 +171,42 @@ export default function Home() {
                         </CustomizeToggleHint>
                     </CustomizeToggle>
 
+                    <CustomizeItemStack>
+                        <CustomizeItemRow>
+                            <CustomizeItemIcon icon="clock" width={18} height={18} />
+                            <CustomizeItemLabelGroup>
+                                <CustomizeItemLabel>Fonte dos numeros</CustomizeItemLabel>
+                                <CustomizeItemDescription>Escolha uma fonte para os numeros do floating e veja a amostra antes de aplicar.</CustomizeItemDescription>
+                            </CustomizeItemLabelGroup>
+                        </CustomizeItemRow>
+
+                        <CustomizeFontsScroll>
+                            {fontOptions.map(item => (
+                                <CustomizeOptionPreview
+                                    active={fontKey === item.key}
+                                    disabled={busy}
+                                    key={item.key}
+                                    onPress={() => handleSelectFont(item.key)}
+                                >
+                                    <CustomizeOptionPreviewValue active={fontKey === item.key} fontFamily={item.previewFont} letterSpacing={item.previewSpacing}>{item.previewValue}</CustomizeOptionPreviewValue>
+                                    <CustomizeOptionPreviewLabel active={fontKey === item.key}>{item.label}</CustomizeOptionPreviewLabel>
+                                </CustomizeOptionPreview>
+                            ))}
+                        </CustomizeFontsScroll>
+                    </CustomizeItemStack>
+
+                    <CustomizeItemStack>
+                        <CustomizeItemRow>
+                            <CustomizeItemIcon icon="edit" width={18} height={18} />
+                            <CustomizeItemLabelGroup>
+                                <CustomizeItemLabel>Cor do floating</CustomizeItemLabel>
+                                <CustomizeItemDescription>Escolha a cor do fundo do cronometro flutuante.</CustomizeItemDescription>
+                            </CustomizeItemLabelGroup>
+                        </CustomizeItemRow>
+
+                        <CustomizeOptionLabel>Fundo</CustomizeOptionLabel>
+                    </CustomizeItemStack>
+
                     <ColorPicker
                         hint="Defina a cor real do card flutuante com toque e arraste."
                         label="Cor do floating"
@@ -169,6 +214,18 @@ export default function Home() {
                         onComplete={handleCommitBackground}
                         value={backgroundHex}
                     />
+
+                    <CustomizeItemStack>
+                        <CustomizeItemRow>
+                            <CustomizeItemIcon icon="edit" width={18} height={18} />
+                            <CustomizeItemLabelGroup>
+                                <CustomizeItemLabel>Cor do texto</CustomizeItemLabel>
+                                <CustomizeItemDescription>Escolha a cor dos numeros para manter contraste e leitura.</CustomizeItemDescription>
+                            </CustomizeItemLabelGroup>
+                        </CustomizeItemRow>
+
+                        <CustomizeOptionLabel>Texto</CustomizeOptionLabel>
+                    </CustomizeItemStack>
 
                     <ColorPicker
                         hint="Escolha a cor exata dos numeros para manter contraste e leitura."

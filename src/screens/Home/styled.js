@@ -212,6 +212,59 @@ export const CustomizeHint = styled.Text.attrs({
     margin-bottom: 18px;
 `;
 
+export const CustomizeItemStack = styled.View.attrs({
+})`
+    margin-bottom: 12px;
+`;
+
+export const CustomizeItemRow = styled.View.attrs({
+})`
+    flex-direction: row;
+    align-items: flex-start;
+`;
+
+export const CustomizeItemIcon = styled(Icon).attrs(props => ({
+    fill: 'transparent',
+    stroke: props.theme.timerFace,
+}))`
+    margin-top: 3px;
+    margin-right: 12px;
+`;
+
+export const CustomizeItemLabelGroup = styled.View.attrs({
+})`
+    flex: 1;
+`;
+
+export const CustomizeItemLabel = styled.Text.attrs({
+})`
+    font-family: Bold;
+    font-size: 16px;
+    line-height: 21px;
+    color: ${props => props.theme.timerFace};
+    margin-bottom: 4px;
+`;
+
+export const CustomizeItemDescription = styled.Text.attrs({
+})`
+    font-family: Regular;
+    font-size: 13px;
+    line-height: 19px;
+    color: ${props => props.theme.timerTextMuted};
+`;
+
+export const CustomizeOptionLabel = styled.Text.attrs({
+})`
+    font-family: SemiBold;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: ${props => props.theme.timerAccentSoft};
+    margin-top: 10px;
+    margin-left: 30px;
+`;
+
 export const CustomizeToggle = styled.View.attrs({
 })`
     padding: 14px 16px;
@@ -258,6 +311,55 @@ export const CustomizeToggleHint = styled.Text.attrs({
     line-height: ${props => props.subtle ? '18px' : '18px'};
     color: ${props => props.subtle ? props.theme.timerTextMuted : props.active ? props.theme.timerAccentSoft : props.theme.timerTextMuted};
     margin-top: ${props => props.subtle ? '10px' : '4px'};
+`;
+
+export const CustomizeFontsScroll = styled.ScrollView.attrs({
+    horizontal: true,
+    showsHorizontalScrollIndicator: false,
+    contentContainerStyle: {
+        alignItems: 'stretch',
+        paddingHorizontal: 2,
+        paddingRight: 14,
+    },
+})`
+    margin-top: 14px;
+`;
+
+export const CustomizeOptionPreview = styled.TouchableOpacity.attrs(props => ({
+    activeOpacity: props.disabled ? 1 : 0.82,
+    disabled: props.disabled,
+}))`
+    width: 158px;
+    min-height: 124px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: ${props => props.active ? props.theme.timerAccent : props.theme.timerScreen};
+    border-width: ${props => props.active ? '2px' : '1px'};
+    border-color: ${props => props.active ? props.theme.timerAccentSoft : props.theme.lightshadow};
+    margin-right: 12px;
+    justify-content: center;
+    align-items: center;
+    opacity: ${props => props.disabled ? 0.6 : 1};
+`;
+
+export const CustomizeOptionPreviewValue = styled.Text.attrs({
+})`
+    font-family: ${props => props.fontFamily};
+    font-size: 18px;
+    line-height: 22px;
+    letter-spacing: ${props => `${props.letterSpacing || 0}px`};
+    color: ${props => props.active ? props.theme.timerScreen : props.theme.timerFace};
+    text-align: center;
+    margin-bottom: 14px;
+`;
+
+export const CustomizeOptionPreviewLabel = styled.Text.attrs({
+})`
+    font-family: ${props => props.active ? 'Bold' : 'Regular'};
+    font-size: 12px;
+    line-height: 16px;
+    color: ${props => props.active ? props.theme.timerScreen : props.theme.timerTextMuted};
+    text-align: center;
 `;
 
 export const DonationCard = styled.View.attrs({

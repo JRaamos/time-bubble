@@ -10,6 +10,7 @@ import {
     hideFloatingTimer,
     openOverlayPermissionSettings,
     setFloatingTimerAppearance,
+    setFloatingTimerFontKey,
     setFloatingTimerShowMilliseconds,
     showFloatingTimer,
     subscribeFloatingTimerState,
@@ -41,6 +42,72 @@ const formatElapsedTime = (elapsedMs, showMilliseconds) => {
     return `${ String(minutes).padStart(2, '0') }:${ String(seconds).padStart(2, '0') }.${ String(milliseconds).padStart(3, '0') }`
 }
 
+export const TIMER_FONT_OPTIONS = [
+    {
+        key: 'ds-digib',
+        label: 'DS DIGIB',
+        previewFont: 'monospace',
+        previewSpacing: 1.2,
+        previewValue: '12:34:56',
+    },
+    {
+        key: 'ds-digii',
+        label: 'DS DIGII',
+        previewFont: 'monospace',
+        previewSpacing: 1.8,
+        previewValue: '12:34:56',
+    },
+    {
+        key: 'ds-digit',
+        label: 'DS DIGIT',
+        previewFont: 'monospace',
+        previewSpacing: 2.2,
+        previewValue: '12:34:56',
+    },
+    {
+        key: 'serif',
+        label: 'Serif',
+        previewFont: 'serif',
+        previewSpacing: 0,
+        previewValue: '12:34:56',
+    },
+    {
+        key: 'sans-condensed',
+        label: 'Sans Condensado',
+        previewFont: 'sans-serif-condensed',
+        previewSpacing: -0.4,
+        previewValue: '12:34:56',
+    },
+    {
+        key: 'sans-medium',
+        label: 'Sans Medio',
+        previewFont: 'sans-serif-medium',
+        previewSpacing: 0,
+        previewValue: '12:34:56',
+    },
+    {
+        key: 'roboto-mono',
+        label: 'Roboto Mono',
+        previewFont: 'monospace',
+        previewSpacing: 0.6,
+        previewValue: '12:34:56',
+    },
+    {
+        key: 'space-mono',
+        label: 'Space Mono',
+        previewFont: 'monospace',
+        previewSpacing: 1,
+        previewValue: '12:34:56',
+    },
+    {
+        key: 'dm-mono',
+        label: 'DM Mono',
+        previewFont: 'monospace',
+        previewSpacing: 0.2,
+        previewValue: '12:34:56',
+    },
+]
+
 export default function useController(){
     const appState = useRef(AppState.currentState)
     const backgroundHexRef = useRef('#171C27')
@@ -54,6 +121,7 @@ export default function useController(){
     const [timerRunning, setTimerRunning] = useState(false)
     const [elapsedMs, setElapsedMs] = useState(0)
     const [backgroundHex, setBackgroundHex] = useState('#171C27')
+    const [fontKey, setFontKey] = useState('ds-digib')
     const [textHex, setTextHex] = useState('#F9FBFF')
     const [showMilliseconds, setShowMilliseconds] = useState(false)
     const [pixCopied, setPixCopied] = useState(false)
@@ -89,6 +157,7 @@ export default function useController(){
         setTimerRunning(!!state?.running)
         setElapsedMs(typeof state?.elapsedMs === 'number' ? state.elapsedMs : 0)
         setBackgroundHex(appearance?.backgroundHex || '#171C27')
+        setFontKey(appearance?.fontKey || 'ds-digib')
         setTextHex(appearance?.textHex || '#F9FBFF')
         setShowMilliseconds(!!appearance?.showMilliseconds)
         setLoading(false)
@@ -208,6 +277,24 @@ export default function useController(){
         syncState()
     }
 
+    const handleSelectFont = async nextFontKey => {
+        if (fontKey === nextFontKey) {
+            return
+        }
+
+        setFontKey(nextFontKey)
+
+        try {
+            await setFloatingTimerFontKey(nextFontKey)
+        } catch (error) {
+            debugError('handleSelectFont:error', error)
+            syncState()
+            return
+        }
+
+        syncState()
+    }
+
     const handleCopyPixKey = async () => {
         try {
             await Clipboard.setStringAsync('3a10aa75-dd23-4fb2-8e70-099fb02fadf3')
@@ -229,6 +316,8 @@ export default function useController(){
         backgroundHex,
         busy,
         elapsedMs,
+        fontKey,
+        fontOptions: TIMER_FONT_OPTIONS,
         formattedElapsed: formatElapsedTime(elapsedMs, showMilliseconds),
         handleHideOverlay,
         handlePrimaryAction,
@@ -237,6 +326,7 @@ export default function useController(){
         handleCopyPixKey,
         handlePreviewBackground,
         handlePreviewText,
+        handleSelectFont,
         handleToggleMilliseconds,
         loading,
         overlayVisible,
