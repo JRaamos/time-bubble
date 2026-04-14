@@ -2,6 +2,7 @@ import React from 'react'
 
 import ContainerAuthenticated from '@containers/Authenticated'
 import ColorPicker from '@components/ColorPicker'
+import Toggle from '@components/Form/Toggle'
 
 import useController from './controller'
 
@@ -9,8 +10,39 @@ import {
     BrandBubble,
     BrandCopy,
     CustomizeCard,
+    CustomizeDivider,
     CustomizeHint,
+    CustomizeFontsScroll,
+    CustomizeItemDescription,
+    CustomizeItemIcon,
+    CustomizeItemLabel,
+    CustomizeItemLabelGroup,
+    CustomizeItemRow,
+    CustomizeItemStack,
+    CustomizeOptionLabel,
+    CustomizeOptionPreview,
+    CustomizeOptionPreviewLabel,
+    CustomizeOptionPreviewSample,
+    CustomizeOptionPreviewValue,
+    CustomizeToggle,
+    CustomizeToggleCopy,
+    CustomizeToggleHint,
+    CustomizeToggleLabel,
+    CustomizeToggleMarker,
+    CustomizeToggleRow,
     CustomizeTitle,
+    DonationButton,
+    DonationButtonIcon,
+    DonationButtonText,
+    DonationCard,
+    DonationCopy,
+    DonationEyebrow,
+    DonationHint,
+    DonationLabel,
+    DonationQrFrame,
+    DonationQrCode,
+    DonationTitle,
+    DonationValue,
     Eyebrow,
     GestureBullet,
     GestureList,
@@ -21,21 +53,10 @@ import {
     HeroRow,
     HeroText,
     HeroTitle,
-    InlineActions,
-    Preview,
-    PreviewBubble,
-    PreviewHeader,
-    PreviewHint,
-    PreviewTag,
-    PreviewTagText,
-    PreviewTime,
-    PreviewTitle,
     PrimaryAction,
     PrimaryActionIcon,
     PrimaryActionText,
     Screen,
-    SecondaryAction,
-    SecondaryActionText,
     SummaryCard,
     SummaryGrid,
     SummaryLabel,
@@ -47,19 +68,27 @@ export default function Home() {
     const {
         busy,
         backgroundHex,
-        formattedElapsed,
+        fontKey,
+        fontOptions,
         handleCommitBackground,
         handleCommitText,
-        handleHideOverlay,
+        handleCopyPixKey,
         handlePrimaryAction,
         handlePreviewBackground,
         handlePreviewText,
-        loading,
+        handleSelectFont,
+        handleToggleOpenOnLaunch,
+        handleToggleMilliseconds,
+        openOnAppLaunch,
         overlayVisible,
         permissionGranted,
         platformIsAndroid,
+        pixCopied,
+        pixPayload,
+        pixKey,
+        pixOwner,
+        showMilliseconds,
         textHex,
-        timerRunning,
     } = useController()
 
     return (
@@ -71,8 +100,8 @@ export default function Home() {
                             <PrimaryActionIcon />
                         </BrandBubble>
                         <BrandCopy>
-                            <Eyebrow>TimeBubble</Eyebrow>
-                            <HeroTitle>Cronometro flutuante</HeroTitle>
+                            <Eyebrow>Cronômetro flutuante</Eyebrow>
+                            <HeroTitle>Cronômetro flutuante</HeroTitle>
                         </BrandCopy>
                     </HeroRow>
                     <HeroText>
@@ -93,7 +122,7 @@ export default function Home() {
                     </GestureRow>
                     <GestureRow>
                         <GestureBullet />
-                        <GestureText>Duplo toque zera imediatamente para 00:00.000.</GestureText>
+                        <GestureText>Duplo toque zera imediatamente o cronometro.</GestureText>
                     </GestureRow>
                     <GestureRow>
                         <GestureBullet />
@@ -112,6 +141,95 @@ export default function Home() {
                         <GestureText>Quando o botao aparecer, tocar no cronometro fora dele apenas esconde o fechamento.</GestureText>
                     </GestureRow>
                 </GestureList>
+                <CustomizeCard>
+                    <CustomizeTitle>Visual do floating</CustomizeTitle>
+                    <CustomizeHint>
+                        Ajuste comportamento, fonte e cor. Tudo aplica no floating em tempo real.
+                    </CustomizeHint>
+                    <CustomizeDivider />
+
+                    <CustomizeToggle active={showMilliseconds}>
+                        <CustomizeToggleRow>
+                            <CustomizeToggleCopy>
+                                <CustomizeToggleLabel>Mostrar Milissegundos</CustomizeToggleLabel>
+                                <CustomizeToggleHint subtle>
+                                    Ative so quando quiser uma leitura mais precisa.
+                                </CustomizeToggleHint>
+                            </CustomizeToggleCopy>
+                            <Toggle disabled={busy} onChange={handleToggleMilliseconds} timer value={showMilliseconds} />
+                        </CustomizeToggleRow>
+                    </CustomizeToggle>
+
+                    <CustomizeToggle active={openOnAppLaunch}>
+                        <CustomizeToggleRow>
+                            <CustomizeToggleCopy>
+                                <CustomizeToggleLabel>Abrir floating ao entrar</CustomizeToggleLabel>
+                                <CustomizeToggleHint subtle>
+                                    Com permissao liberada, o app abre direto no floating.
+                                </CustomizeToggleHint>
+                            </CustomizeToggleCopy>
+                            <Toggle disabled={busy} onChange={handleToggleOpenOnLaunch} timer value={openOnAppLaunch} />
+                        </CustomizeToggleRow>
+                    </CustomizeToggle>
+
+                    <CustomizeItemStack>
+                        <CustomizeToggle>
+
+                            <CustomizeItemRow>
+                                <CustomizeItemLabelGroup>
+                                    <CustomizeItemLabel>Fonte dos numeros</CustomizeItemLabel>
+                                    <CustomizeItemDescription>Role lateralmente e toque para aplicar.</CustomizeItemDescription>
+                                </CustomizeItemLabelGroup>
+                            </CustomizeItemRow>
+
+                            <CustomizeFontsScroll>
+                                {fontOptions.map(item => (
+                                    <CustomizeOptionPreview
+                                        active={fontKey === item.key}
+                                        disabled={busy}
+                                        key={item.key}
+                                        onPress={() => handleSelectFont(item.key)}
+                                    >
+                                        <CustomizeOptionPreviewSample>
+                                            <CustomizeOptionPreviewValue active={fontKey === item.key} fontFamily={item.previewFont} letterSpacing={item.previewSpacing}>{item.previewValue}</CustomizeOptionPreviewValue>
+                                        </CustomizeOptionPreviewSample>
+                                        <CustomizeOptionPreviewLabel active={fontKey === item.key}>{item.label}</CustomizeOptionPreviewLabel>
+                                    </CustomizeOptionPreview>
+                                ))}
+                            </CustomizeFontsScroll>
+                        </CustomizeToggle>
+                    </CustomizeItemStack>
+
+                    <CustomizeItemStack>
+                        <CustomizeItemRow>
+                            <CustomizeItemLabelGroup>
+                                <CustomizeItemLabel>Cor do floating</CustomizeItemLabel>
+                                <CustomizeItemDescription>Escolha a cor do fundo do cronometro flutuante.</CustomizeItemDescription>
+                            </CustomizeItemLabelGroup>
+                        </CustomizeItemRow>
+                    </CustomizeItemStack>
+
+                    <ColorPicker onChange={handlePreviewBackground} onComplete={handleCommitBackground} value={backgroundHex} />
+
+                    <CustomizeItemStack>
+                        <CustomizeItemRow>
+                            <CustomizeItemLabelGroup>
+                                <CustomizeItemLabel>Cor do texto</CustomizeItemLabel>
+                                <CustomizeItemDescription>Escolha a cor dos numeros para manter contraste e leitura.</CustomizeItemDescription>
+                            </CustomizeItemLabelGroup>
+                        </CustomizeItemRow>
+
+                    </CustomizeItemStack>
+
+                    <ColorPicker
+                        hint="Escolha a cor exata dos numeros para manter contraste e leitura."
+                        label="Cor dos numeros"
+                        last
+                        onChange={handlePreviewText}
+                        onComplete={handleCommitText}
+                        value={textHex}
+                    />
+                </CustomizeCard>
                 <SummaryGrid>
                     <SummaryCard active={permissionGranted}>
                         <SummaryLabel>Permissao</SummaryLabel>
@@ -129,58 +247,36 @@ export default function Home() {
                     </SummaryCard>
                 </SummaryGrid>
 
-                <Preview>
-                    <PreviewHeader>
-                        <PreviewTitle>Estado do cronometro</PreviewTitle>
-                        <PreviewTag active={overlayVisible}>
-                            <PreviewTagText>{timerRunning ? 'Rodando' : overlayVisible ? 'Pausado' : 'Pronto'}</PreviewTagText>
-                        </PreviewTag>
-                    </PreviewHeader>
-                    <PreviewBubble backgroundHex={backgroundHex}>
-                        <PreviewTime textHex={textHex}>{formattedElapsed}</PreviewTime>
-                    </PreviewBubble>
-                    <PreviewHint>
-                        {loading ? 'Sincronizando o estado atual do cronometro.' : permissionGranted ? 'Depois de abrir o card, o controle principal acontece diretamente no overlay nativo.' : 'Se o aparelho nao expuser essa permissao, o Android pode bloquear esse recurso no proprio sistema.'}
-                    </PreviewHint>
-                    {
-                        overlayVisible ? (
-                            <InlineActions>
-                                <SecondaryAction first onPress={handlePrimaryAction}>
-                                    <SecondaryActionText>Trazer de volta</SecondaryActionText>
-                                </SecondaryAction>
-                                <SecondaryAction danger onPress={handleHideOverlay}>
-                                    <SecondaryActionText>Fechar overlay</SecondaryActionText>
-                                </SecondaryAction>
-                            </InlineActions>
-                        ) : null
-                    }
-                </Preview>
 
-                <CustomizeCard>
-                    <CustomizeTitle>Visual do floating</CustomizeTitle>
-                    <CustomizeHint>
-                        A escolha acontece na tela React Native, mas as cores sao salvas no aparelho e aplicadas no overlay nativo.
-                    </CustomizeHint>
 
-                    <ColorPicker
-                        hint="Defina a cor real do card flutuante com toque e arraste."
-                        label="Cor do floating"
-                        onChange={handlePreviewBackground}
-                        onComplete={handleCommitBackground}
-                        value={backgroundHex}
-                    />
+                <DonationCard>
+                    <DonationEyebrow>Apoie o desenvolvimento</DonationEyebrow>
+                    <DonationTitle>Pix para contribuir com o app</DonationTitle>
+                    <DonationHint>
+                        Se o TimeBubble estiver sendo util para voce, pode apoiar a evolucao do projeto com um Pix.
+                    </DonationHint>
 
-                    <ColorPicker
-                        hint="Escolha a cor exata dos numeros para manter contraste e leitura."
-                        label="Cor dos numeros"
-                        last
-                        onChange={handlePreviewText}
-                        onComplete={handleCommitText}
-                        value={textHex}
-                    />
-                </CustomizeCard>
+                    <DonationQrFrame>
+                        <DonationQrCode value={pixPayload} />
+                    </DonationQrFrame>
+
+                    <DonationButton onPress={handleCopyPixKey}>
+                        <DonationButtonIcon />
+                        <DonationButtonText>{pixCopied ? 'Chave Pix copiada' : 'Copiar chave Pix'}</DonationButtonText>
+                    </DonationButton>
+
+                    <DonationCopy>
+                        <DonationLabel>Nome</DonationLabel>
+                        <DonationValue>{pixOwner}</DonationValue>
+                    </DonationCopy>
+
+                    <DonationCopy>
+                        <DonationLabel>Chave Pix</DonationLabel>
+                        <DonationValue>{pixKey}</DonationValue>
+                    </DonationCopy>
+                </DonationCard>
 
             </Screen>
-        </ContainerAuthenticated>
+        </ContainerAuthenticated >
     )
 }

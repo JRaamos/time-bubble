@@ -8,7 +8,10 @@ const fallbackState = {
 
 const fallbackAppearance = {
     backgroundHex: '#171C27',
+    fontKey: 'ds-digib',
+    openOnAppLaunch: false,
     textHex: '#F9FBFF',
+    showMilliseconds: false,
 }
 
 const floatingTimerModule = NativeModules.FloatingTimerModule
@@ -111,7 +114,10 @@ export const getFloatingTimerAppearance = async () => {
 
     return {
         backgroundHex: appearance?.backgroundHex || fallbackAppearance.backgroundHex,
+        fontKey: appearance?.fontKey || fallbackAppearance.fontKey,
+        openOnAppLaunch: !!appearance?.openOnAppLaunch,
         textHex: appearance?.textHex || fallbackAppearance.textHex,
+        showMilliseconds: !!appearance?.showMilliseconds,
     }
 }
 
@@ -132,10 +138,58 @@ export const setFloatingTimerAppearance = async (backgroundHex, textHex) => {
     return floatingTimerModule.setFloatingTimerAppearance(backgroundHex, textHex)
 }
 
+export const setFloatingTimerShowMilliseconds = async showMilliseconds => {
+    if (Platform.OS !== 'android' || !floatingTimerModule?.setFloatingTimerShowMilliseconds) {
+        debugLog('setFloatingTimerShowMilliseconds:unavailable', {
+            platform: Platform.OS,
+            hasModule: !!floatingTimerModule,
+        })
+        return
+    }
+
+    debugLog('setFloatingTimerShowMilliseconds:start', {
+        showMilliseconds,
+    })
+
+    return floatingTimerModule.setFloatingTimerShowMilliseconds(!!showMilliseconds)
+}
+
+export const setFloatingTimerFontKey = async fontKey => {
+    if (Platform.OS !== 'android' || !floatingTimerModule?.setFloatingTimerFontKey) {
+        debugLog('setFloatingTimerFontKey:unavailable', {
+            platform: Platform.OS,
+            hasModule: !!floatingTimerModule,
+        })
+        return
+    }
+
+    debugLog('setFloatingTimerFontKey:start', {
+        fontKey,
+    })
+
+    return floatingTimerModule.setFloatingTimerFontKey(fontKey)
+}
+
+export const setFloatingTimerOpenOnAppLaunch = async openOnAppLaunch => {
+    if (Platform.OS !== 'android' || !floatingTimerModule?.setFloatingTimerOpenOnAppLaunch) {
+        debugLog('setFloatingTimerOpenOnAppLaunch:unavailable', {
+            platform: Platform.OS,
+            hasModule: !!floatingTimerModule,
+        })
+        return
+    }
+
+    debugLog('setFloatingTimerOpenOnAppLaunch:start', {
+        openOnAppLaunch,
+    })
+
+    return floatingTimerModule.setFloatingTimerOpenOnAppLaunch(!!openOnAppLaunch)
+}
+
 export const subscribeFloatingTimerState = listener => {
     if (!floatingTimerEmitter) {
         return {
-            remove: () => {},
+            remove: () => { },
         }
     }
 

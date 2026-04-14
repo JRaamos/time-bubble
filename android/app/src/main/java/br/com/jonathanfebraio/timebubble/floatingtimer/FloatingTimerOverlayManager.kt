@@ -20,6 +20,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import br.com.jonathanfebraio.timebubble.R
 import kotlin.math.abs
+import kotlin.math.roundToLong
 
 class FloatingTimerOverlayManager(
     private val context: Context,
@@ -31,17 +32,21 @@ class FloatingTimerOverlayManager(
         fun onPositionChanged(x: Int, y: Int)
         fun onScaleChanged(scale: Float)
         fun onCloseRequested()
+        fun onSettingsRequested()
     }
 
     private val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     private val touchSlop = dpToPx(8)
-    private val closeRevealLongPressTimeoutMs = ViewConfiguration.getLongPressTimeout().toLong() + 450L
+    private val closeRevealLongPressTimeoutMs =
+        ((ViewConfiguration.getLongPressTimeout().toLong() + 450L) * CLOSE_REVEAL_TIMEOUT_FACTOR).roundToLong()
 
     private var rootView: LinearLayout? = null
     private var cardView: FrameLayout? = null
     private var cardBackground: GradientDrawable? = null
     private var timerTextView: TextView? = null
+    private var actionsRowView: LinearLayout? = null
     private var closeButtonView: TextView? = null
+    private var settingsButtonView: TextView? = null
 
     fun show() {
         if (rootView != null) {
@@ -84,9 +89,29 @@ class FloatingTimerOverlayManager(
 
         val timeView = TextView(context).apply {
             setTextColor(FloatingTimerAppearanceStore.resolveTextColor(context))
-            typeface = Typeface.MONOSPACE
+            typeface = resolveTimerTypeface()
             gravity = Gravity.CENTER
             text = formatElapsed(FloatingTimerStateStore.getElapsedMs())
+        }
+
+        val actionsRow = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.END
+            visibility = View.GONE
+        }
+
+        val settingsView = TextView(context).apply {
+            text = context.getString(R.string.floating_timer_settings_button)
+            setTextColor(Color.WHITE)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            typeface = Typeface.DEFAULT_BOLD
+            gravity = Gravity.CENTER
+            this.background = GradientDrawable().apply {
+                cornerRadius = dpToPx(18).toFloat()
+                setColor(ContextCompat.getColor(context, R.color.floating_timer_border))
+            }
+            setPadding(dpToPx(14), dpToPx(8), dpToPx(14), dpToPx(8))
+            setOnClickListener { listener.onSettingsRequested() }
         }
 
         val closeView = TextView(context).apply {
@@ -99,7 +124,6 @@ class FloatingTimerOverlayManager(
                 cornerRadius = dpToPx(18).toFloat()
                 setColor(ContextCompat.getColor(context, R.color.floating_timer_close_background))
             }
-            visibility = View.GONE
             setPadding(dpToPx(14), dpToPx(8), dpToPx(14), dpToPx(8))
             setOnClickListener { listener.onCloseRequested() }
         }
@@ -121,8 +145,26 @@ class FloatingTimerOverlayManager(
             ),
         )
 
-        root.addView(
+        actionsRow.addView(
+            settingsView,
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            ).apply {
+                marginEnd = dpToPx(8)
+            },
+        )
+
+        actionsRow.addView(
             closeView,
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            ),
+        )
+
+        root.addView(
+            actionsRow,
             LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -137,6 +179,8 @@ class FloatingTimerOverlayManager(
         cardView = card
         cardBackground = background
         timerTextView = timeView
+        actionsRowView = actionsRow
+        settingsButtonView = settingsView
         closeButtonView = closeView
 
         applyScale(FloatingTimerStateStore.overlayScale)
@@ -148,6 +192,8 @@ class FloatingTimerOverlayManager(
     fun applyAppearance() {
         cardBackground?.setColor(FloatingTimerAppearanceStore.resolveBackgroundColor(context))
         timerTextView?.setTextColor(FloatingTimerAppearanceStore.resolveTextColor(context))
+        timerTextView?.typeface = resolveTimerTypeface()
+        timerTextView?.letterSpacing = resolveLetterSpacing()
         rootView?.requestLayout()
     }
 
@@ -161,7 +207,9 @@ class FloatingTimerOverlayManager(
         cardView = null
         cardBackground = null
         timerTextView = null
+        actionsRowView = null
         closeButtonView = null
+        settingsButtonView = null
     }
 
     private fun attachTouchHandling(root: LinearLayout, card: FrameLayout, params: WindowManager.LayoutParams) {
@@ -332,15 +380,15 @@ class FloatingTimerOverlayManager(
     }
 
     private fun showCloseButton() {
-        closeButtonView?.visibility = View.VISIBLE
+        actionsRowView?.visibility = View.VISIBLE
     }
 
     private fun hideCloseButton() {
-        closeButtonView?.visibility = View.GONE
+        actionsRowView?.visibility = View.GONE
     }
 
     private fun isCloseVisible(): Boolean {
-        return closeButtonView?.visibility == View.VISIBLE
+        return actionsRowView?.visibility == View.VISIBLE
     }
 
     private fun dpToPx(value: Int): Int {
@@ -354,12 +402,44 @@ class FloatingTimerOverlayManager(
     private fun formatElapsed(elapsedMs: Long): String {
         val minutes = elapsedMs / 60000
         val seconds = (elapsedMs % 60000) / 1000
-        val milliseconds = elapsedMs % 1000
 
+        if (!FloatingTimerAppearanceStore.getShowMilliseconds(context)) {
+            return String.format("%02d:%02d", minutes, seconds)
+        }
+
+        val milliseconds = elapsedMs % 1000
         return String.format("%02d:%02d.%03d", minutes, seconds, milliseconds)
     }
 
+    private fun resolveTimerTypeface(): Typeface {
+        return when (FloatingTimerAppearanceStore.getFontKey(context)) {
+            "ds-digib" -> Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+            "ds-digii" -> Typeface.MONOSPACE
+            "sans-condensed" -> Typeface.create("sans-serif-condensed", Typeface.NORMAL)
+            "sans-medium" -> Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            "serif" -> Typeface.SERIF
+            "ds-digit" -> Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+            "roboto-mono" -> Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
+            "space-mono" -> Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+            "dm-mono" -> Typeface.create("sans-serif-light", Typeface.NORMAL)
+            else -> Typeface.MONOSPACE
+        }
+    }
+
+    private fun resolveLetterSpacing(): Float {
+        return when (FloatingTimerAppearanceStore.getFontKey(context)) {
+            "ds-digii" -> 0.08f
+            "ds-digit" -> 0.12f
+            "sans-condensed" -> -0.03f
+            "roboto-mono" -> 0.02f
+            "space-mono" -> 0.06f
+            "dm-mono" -> -0.01f
+            else -> 0f
+        }
+    }
+
     companion object {
+        private const val CLOSE_REVEAL_TIMEOUT_FACTOR = 0.7
         private const val MIN_SCALE = 0.75f
         private const val MAX_SCALE = 1.8f
     }

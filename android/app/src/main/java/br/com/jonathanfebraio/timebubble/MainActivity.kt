@@ -3,12 +3,16 @@ import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
 import android.os.Bundle
+import android.content.Intent
+import android.provider.Settings
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 
+import br.com.jonathanfebraio.timebubble.floatingtimer.FloatingTimerAppearanceStore
+import br.com.jonathanfebraio.timebubble.floatingtimer.FloatingTimerService
 import expo.modules.ReactActivityDelegateWrapper
 
 class MainActivity : ReactActivity() {
@@ -21,6 +25,13 @@ class MainActivity : ReactActivity() {
     SplashScreenManager.registerOnActivity(this)
     // @generated end expo-splashscreen
     super.onCreate(null)
+    maybeOpenFloatingAndClose(intent)
+  }
+
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    setIntent(intent)
+    maybeOpenFloatingAndClose(intent)
   }
 
   /**
@@ -61,5 +72,36 @@ class MainActivity : ReactActivity() {
       // Use the default back button implementation on Android S
       // because it's doing more than [Activity.moveTaskToBack] in fact.
       super.invokeDefaultOnBackPressed()
+  }
+
+  private fun maybeOpenFloatingAndClose(launchIntent: Intent?) {
+    if (!shouldOpenFloatingOnly(launchIntent)) {
+      return
+    }
+
+    FloatingTimerService.show(applicationContext)
+    moveTaskToBack(true)
+    finish()
+    overridePendingTransition(0, 0)
+  }
+
+  private fun shouldOpenFloatingOnly(launchIntent: Intent?): Boolean {
+    if (launchIntent?.getBooleanExtra(EXTRA_OPEN_SETTINGS, false) == true) {
+      return false
+    }
+
+    if (!FloatingTimerAppearanceStore.getOpenOnAppLaunch(this)) {
+      return false
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+      return false
+    }
+
+    return true
+  }
+
+  companion object {
+    const val EXTRA_OPEN_SETTINGS = "floating_timer_open_settings"
   }
 }

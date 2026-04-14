@@ -112,6 +112,15 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
         hideOverlay()
     }
 
+    override fun onSettingsRequested() {
+        val launchIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(MainActivity.EXTRA_OPEN_SETTINGS, true)
+        }
+
+        startActivity(launchIntent)
+    }
+
     private fun showOverlay() {
         startForeground(NOTIFICATION_ID, buildNotification())
         overlayManager?.show()
@@ -142,6 +151,7 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
     private fun buildNotification(): Notification {
         val launchIntent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(MainActivity.EXTRA_OPEN_SETTINGS, true)
         }
 
         val contentPendingIntent = PendingIntent.getActivity(
@@ -193,17 +203,22 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
         manager.createNotificationChannel(channel)
     }
 
-    private fun formatElapsed(elapsedMs: Long): String {
+    private fun formatElapsed(elapsedMs: Long, showMilliseconds: Boolean = FloatingTimerAppearanceStore.getShowMilliseconds(this)): String {
         val minutes = elapsedMs / 60000
         val seconds = (elapsedMs % 60000) / 1000
-        val milliseconds = elapsedMs % 1000
 
+        if (!showMilliseconds) {
+            return String.format("%02d:%02d", minutes, seconds)
+        }
+
+        val milliseconds = elapsedMs % 1000
         return String.format("%02d:%02d.%03d", minutes, seconds, milliseconds)
     }
 
     companion object {
         private const val CHANNEL_ID = "floating_timer_overlay"
         private const val NOTIFICATION_ID = 1201
+        private val mainHandler = Handler(Looper.getMainLooper())
         private var activeInstance: FloatingTimerService? = null
 
         const val ACTION_HIDE = "br.com.jonathanfebraio.timebubble.floatingtimer.HIDE"
@@ -225,8 +240,17 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
             context.startService(intent)
         }
 
-        fun refreshAppearance() {
-            activeInstance?.overlayManager?.applyAppearance()
+        fun refreshOverlay(showMilliseconds: Boolean? = null) {
+            mainHandler.post {
+                val instance = activeInstance ?: return@post
+                instance.overlayManager?.applyAppearance()
+                instance.overlayManager?.updateTimeText(
+                    instance.formatElapsed(
+                        FloatingTimerStateStore.getElapsedMs(),
+                        showMilliseconds ?: FloatingTimerAppearanceStore.getShowMilliseconds(instance),
+                    ),
+                )
+            }
         }
     }
 }

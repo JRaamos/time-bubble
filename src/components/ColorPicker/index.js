@@ -22,7 +22,7 @@ export default function ColorPicker({
     onChange,
     onComplete,
     value,
-}){
+}) {
     const normalizedValue = sanitizeHexColor(value)
 
     const handleChange = useCallback(colors => {
@@ -37,11 +37,6 @@ export default function ColorPicker({
 
     return (
         <PickerCard last={last}>
-            <PickerHeader>
-                <PickerTitle>{ label }</PickerTitle>
-                <PickerValue>{ normalizedValue }</PickerValue>
-            </PickerHeader>
-
             <PickerLibrary
                 onChangeJS={handleChange}
                 onCompleteJS={handleComplete}
@@ -50,11 +45,6 @@ export default function ColorPicker({
                 <PickerPanel />
                 <PickerHue />
             </PickerLibrary>
-
-            <PickerMeta>
-                <PickerPreview previewHex={normalizedValue} />
-                <PickerHint>{ hint }</PickerHint>
-            </PickerMeta>
         </PickerCard>
     )
 }
