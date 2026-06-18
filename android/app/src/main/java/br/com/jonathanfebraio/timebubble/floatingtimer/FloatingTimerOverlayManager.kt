@@ -6,6 +6,7 @@ import android.graphics.PixelFormat
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.Gravity
@@ -47,10 +48,12 @@ class FloatingTimerOverlayManager(
     private var actionsRowView: LinearLayout? = null
     private var closeButtonView: TextView? = null
     private var settingsButtonView: TextView? = null
+    private var layoutParams: WindowManager.LayoutParams? = null
 
     fun show() {
         if (rootView != null) {
             applyScale(FloatingTimerStateStore.overlayScale)
+            clampAndUpdateLayout()
             updateTimeText(formatElapsed(FloatingTimerStateStore.getElapsedMs()))
             return
         }
@@ -182,11 +185,18 @@ class FloatingTimerOverlayManager(
         actionsRowView = actionsRow
         settingsButtonView = settingsView
         closeButtonView = closeView
+        layoutParams = params
 
         applyScale(FloatingTimerStateStore.overlayScale)
         applyAppearance()
         attachTouchHandling(root, card, params)
         windowManager.addView(root, params)
+        root.post {
+            if (clampPosition(root, params)) {
+                windowManager.updateViewLayout(root, params)
+                listener.onPositionChanged(params.x, params.y)
+            }
+        }
     }
 
     fun applyAppearance() {
@@ -197,11 +207,29 @@ class FloatingTimerOverlayManager(
         rootView?.requestLayout()
     }
 
+    fun setKeepScreenOn(keepScreenOn: Boolean) {
+        val root = rootView ?: return
+        val params = layoutParams ?: return
+        val nextFlags = if (keepScreenOn) {
+            params.flags or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        } else {
+            params.flags and WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON.inv()
+        }
+
+        if (params.flags == nextFlags) {
+            return
+        }
+
+        params.flags = nextFlags
+        windowManager.updateViewLayout(root, params)
+    }
+
     fun updateTimeText(text: String) {
         timerTextView?.text = text
     }
 
     fun remove() {
+        setKeepScreenOn(false)
         rootView?.let(windowManager::removeView)
         rootView = null
         cardView = null
@@ -210,6 +238,7 @@ class FloatingTimerOverlayManager(
         actionsRowView = null
         closeButtonView = null
         settingsButtonView = null
+        layoutParams = null
     }
 
     private fun attachTouchHandling(root: LinearLayout, card: FrameLayout, params: WindowManager.LayoutParams) {
@@ -252,7 +281,9 @@ class FloatingTimerOverlayManager(
 
                 FloatingTimerStateStore.overlayScale = nextScale
                 applyScale(nextScale)
+                clampPosition(root, params)
                 windowManager.updateViewLayout(root, params)
+                listener.onPositionChanged(params.x, params.y)
                 listener.onScaleChanged(nextScale)
                 return true
             }
@@ -320,6 +351,7 @@ class FloatingTimerOverlayManager(
                         if (dragging) {
                             params.x = initialX + deltaX
                             params.y = initialY + deltaY
+                            clampPosition(root, params)
                             windowManager.updateViewLayout(root, params)
                             listener.onPositionChanged(params.x, params.y)
                         } else {
@@ -377,6 +409,66 @@ class FloatingTimerOverlayManager(
         cardBackground?.setStroke(cardStroke, ContextCompat.getColor(context, R.color.floating_timer_border))
         timerTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize)
         rootView?.requestLayout()
+    }
+
+    private fun clampAndUpdateLayout() {
+        val root = rootView ?: return
+        val params = layoutParams ?: return
+
+        if (clampPosition(root, params)) {
+            windowManager.updateViewLayout(root, params)
+            listener.onPositionChanged(params.x, params.y)
+        }
+    }
+
+    private fun clampPosition(root: View, params: WindowManager.LayoutParams): Boolean {
+        root.measure(
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+        )
+
+        val overlayWidth = getMeasuredSize(root.measuredWidth, root.width)
+        val overlayHeight = getMeasuredSize(root.measuredHeight, root.height)
+
+        if (overlayWidth <= 0 || overlayHeight <= 0) {
+            return false
+        }
+
+        val bounds = getScreenBounds()
+        val minX = -(overlayWidth / 2)
+        val maxX = (bounds.first - (overlayWidth / 2)).coerceAtLeast(minX)
+        val minY = -(overlayHeight / 2)
+        val maxY = (bounds.second - (overlayHeight / 2)).coerceAtLeast(minY)
+        val nextX = params.x.coerceIn(minX, maxX)
+        val nextY = params.y.coerceIn(minY, maxY)
+
+        if (params.x == nextX && params.y == nextY) {
+            return false
+        }
+
+        params.x = nextX
+        params.y = nextY
+        return true
+    }
+
+    private fun getMeasuredSize(size: Int, measuredSize: Int): Int {
+        return when {
+            size > 0 -> size
+            measuredSize > 0 -> measuredSize
+            else -> 0
+        }
+    }
+
+    private fun getScreenBounds(): Pair<Int, Int> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val bounds = windowManager.currentWindowMetrics.bounds
+            return Pair(bounds.width(), bounds.height())
+        }
+
+        val metrics = DisplayMetrics()
+        @Suppress("DEPRECATION")
+        windowManager.defaultDisplay.getMetrics(metrics)
+        return Pair(metrics.widthPixels, metrics.heightPixels)
     }
 
     private fun showCloseButton() {

@@ -62,6 +62,7 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
 
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
+        overlayManager?.setKeepScreenOn(false)
         overlayManager?.remove()
         overlayManager = null
         FloatingTimerStateStore.isOverlayVisible = false
@@ -87,6 +88,7 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
         }
 
         overlayManager?.updateTimeText(formatElapsed(FloatingTimerStateStore.getElapsedMs()))
+        syncKeepScreenOn()
         FloatingTimerEventDispatcher.emitState()
     }
 
@@ -96,6 +98,7 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
         FloatingTimerStateStore.isRunning = false
         handler.removeCallbacks(ticker)
         overlayManager?.updateTimeText(formatElapsed(0L))
+        syncKeepScreenOn()
         FloatingTimerEventDispatcher.emitState()
     }
 
@@ -126,6 +129,7 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
         overlayManager?.show()
         overlayManager?.applyAppearance()
         overlayManager?.updateTimeText(formatElapsed(FloatingTimerStateStore.getElapsedMs()))
+        syncKeepScreenOn()
 
         FloatingTimerStateStore.isOverlayVisible = true
         FloatingTimerEventDispatcher.emitState()
@@ -142,10 +146,15 @@ class FloatingTimerService : Service(), FloatingTimerOverlayManager.Listener {
         FloatingTimerStateStore.isRunning = false
         FloatingTimerStateStore.isOverlayVisible = false
         handler.removeCallbacks(ticker)
+        syncKeepScreenOn()
         overlayManager?.remove()
         FloatingTimerEventDispatcher.emitState()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
+    }
+
+    private fun syncKeepScreenOn() {
+        overlayManager?.setKeepScreenOn(FloatingTimerStateStore.isRunning)
     }
 
     private fun buildNotification(): Notification {
